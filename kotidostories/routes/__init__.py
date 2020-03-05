@@ -1,1 +1,1 @@
-from .home import landing_page
+from .home import landing_bp
