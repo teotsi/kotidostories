@@ -13,9 +13,13 @@ def client():
     app.config['TESTING'] = True
 
     with app.test_client() as client:
-        with app.app_context():
-            app.init_db()
         yield client
 
     os.close(db_fd)
     os.unlink(app.config['DATABASE'])
+
+
+def test_up(client):
+    """Start with a blank database."""
+    rv = client.get('/')
+    assert 'OK' in rv.status
