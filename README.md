@@ -4,7 +4,7 @@
 
 Flask-based online stories editor and hub. WIP. Project developed for INF183 course(Information Systems Application Development), at Athens University of Economics and Business.
 
-###Setting up dev environment
+### Setting up dev environment
 
 Simply create a new virtual enviroment (Python 3.6-3.7) and then run the following commands:
 
@@ -14,3 +14,5 @@ pip install -e .
 ```
 
 After that, just run `python -m run` for now.
+
+To skip Travis/CI tests, just add [ci skip] at the end of your commit message.
