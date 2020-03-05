@@ -8,4 +8,9 @@ Flask-based online stories editor and hub. WIP. Project developed for INF183 cou
 
 Simply create a new virtual enviroment (Python 3.6-3.7) and then run the following commands:
 
-`pip install -U pip`, `pip install -Ur requirements.txt`. After that, just run `python -m run` for now.
+```pip install -U pip
+pip install -Ur requirements.txt
+pip install -e .
+```
+
+After that, just run `python -m run` for now.
