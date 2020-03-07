@@ -31,7 +31,8 @@ def register_post():
     if user:
         flash('There\'s already a user with this email address')
         return render_template('sign_up.html',title='Sign up')
-    flash("test")
-    return render_template('sign_up.html')
+
+    new_user =
+    return render_template('sign_up.html', title='Sign up')
 
 
