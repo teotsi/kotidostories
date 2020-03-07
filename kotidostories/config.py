@@ -6,4 +6,6 @@ class Config(object):
     TESTING = os.environ.get('TESTING')
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = os.environ.get('ENV', default='development')
-    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite?check_same_thread=False'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ECHO = True
