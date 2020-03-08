@@ -2,9 +2,11 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+login_manager = LoginManager()
 
 
 def create_app():
@@ -16,7 +18,6 @@ def create_app():
     db.init_app(app)
 
     # configuring authentication manager
-    login_manager = LoginManager()
     login_manager.login_view = 'auth.log_in'
     login_manager.init_app(app)
     with app.app_context():
