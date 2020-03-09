@@ -30,7 +30,8 @@ def create_app():
             return User.query.get(user_id)
 
         # registering blueprints
-        from kotidostories.routes import landing_bp, auth_bp
+        from kotidostories.routes import landing_bp, auth_bp, posting_bp
         app.register_blueprint(landing_bp)
         app.register_blueprint(auth_bp)
+        app.register_blueprint(posting_bp)
     return app

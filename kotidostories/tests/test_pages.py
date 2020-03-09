@@ -21,7 +21,22 @@ def client():
 
 
 def test_up(client):
-    """Start with a blank database."""
     rv = client.get('/')
     assert 'OK' in rv.status
 
+#
+# def test_register(client):
+#     rv = client.post('/register', json={"email": "tes55t@test.gs",
+#                                         "username":"teosss",
+#                                         "password": "pass",
+#                                         "remember_me": "True"
+#                                         })
+#     assert 'OK' in rv.status
+
+
+def test_log_in(client):
+    rv = client.post('/login', json={"email": "test@test.gs",
+                                     "password": "pass",
+                                     "remember_me": "True"
+                                     })
+    assert 'OK' in rv.status
