@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+import flask
 import pytest
 
 from kotidostories import create_app
@@ -23,3 +24,4 @@ def test_up(client):
     """Start with a blank database."""
     rv = client.get('/')
     assert 'OK' in rv.status
+

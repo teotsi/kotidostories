@@ -1,4 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Under construction</h1>
+    {% if current_user.is_authenticated %}
+        <small class="text-muted">
+         <a class="ml-2" href="{{ url_for('auth_bp.logout') }}">Logout</a>
+    </small>
+    {% endif %}
+
 {% endblock content %}
