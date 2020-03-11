@@ -3,9 +3,10 @@ import uuid
 from flask_login import login_user, current_user, logout_user
 from kotidostories import bcrypt, db
 from kotidostories.models import User
-from kotidostories.forms import *
+from kotidostories.schemas.PostSchema import PostSchema
 
 auth_bp = Blueprint('auth_bp', __name__)
+post_schema = PostSchema()
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -20,7 +21,7 @@ def log_in():
     user = User.query.filter_by(email=email).first()  # checking if user exists
     if user and bcrypt.check_password_hash(user.password_hash, password):
         login_user(user, remember=bool(remember_me))
-        posts = [post.serialize() for post in user.posts]
+        posts = [PostSchema().dump(post) for post in user.posts]
         return jsonify({'posts': posts}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401

@@ -20,5 +20,14 @@ class User(db.Model, UserMixin):
     posts = db.relationship("Post", backref="user")
     date = db.Column(db.DateTime(), default=datetime.now)
 
+    def serialize(self):
+        return {'id': self.id,
+                'username': self.username,
+                'first_name': self.first_name,
+                'last_name': self.last_name,
+                'email':self.email,
+                'posts':self.posts,
+                'date':self.date}
+
     def __repr__(self):
         return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}'

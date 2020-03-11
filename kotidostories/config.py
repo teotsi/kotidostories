@@ -16,7 +16,4 @@ class Config(object):
 class TestConfig(Config):
     ENV = os.environ.get('ENV', default='development')
     TESTING = True
-    WTF_CSRF_ENABLED = False
-    SECRET_KEY = os.environ.get('SECRET_KEY', default='So safe')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
