@@ -36,11 +36,11 @@ def test_up(client):
 # def test_log_out(client):
 #     rv = client.get('/logout')
 #     assert 'OK' in rv.status
-
-
-def test_log_in(client):
-    rv = client.post('/login', json={"email": "test@test.gs",
-                                     "password": "pass",
-                                     "remember_me": "True"
-                                     })
-    assert 'OK' in rv.status
+#
+#
+# def test_log_in(client):
+#     rv = client.post('/login', json={"email": "test@test.gs",
+#                                      "password": "pass",
+#                                      "remember_me": "True"
+#                                      })
+#     assert 'OK' in rv.status
