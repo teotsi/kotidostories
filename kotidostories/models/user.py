@@ -17,17 +17,18 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String())
     email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
-    posts = db.relationship("Post", backref="user")
     date = db.Column(db.DateTime(), default=datetime.now)
+    posts = db.relationship("Post", backref="user")
+    comments = db.relationship("Comment", backref="user")
 
     def serialize(self):
         return {'id': self.id,
                 'username': self.username,
                 'first_name': self.first_name,
                 'last_name': self.last_name,
-                'email':self.email,
-                'posts':self.posts,
-                'date':self.date}
+                'email': self.email,
+                'posts': self.posts,
+                'date': self.date}
 
     def __repr__(self):
         return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}'

@@ -1,10 +1,10 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from kotidostories.models import Post
+from kotidostories.models import Comment
 
 
-class PostSchema(SQLAlchemyAutoSchema):
+class CommentSchema(SQLAlchemyAutoSchema):
     class Meta:
         load_instance = True
         include_relationships = True
-        model = Post
+        model = Comment

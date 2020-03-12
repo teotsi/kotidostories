@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response, jsonify
-import uuid
+from flask import Blueprint, request, jsonify
 from flask_login import login_user, current_user, logout_user
-from kotidostories import bcrypt, db
+
+from kotidostories import bcrypt
+from kotidostories.auth_utils import serialize, auth_utils
 from kotidostories.models import User
 from kotidostories.schemas.PostSchema import PostSchema
 
@@ -21,7 +22,7 @@ def log_in():
     user = User.query.filter_by(email=email).first()  # checking if user exists
     if user and bcrypt.check_password_hash(user.password_hash, password):
         login_user(user, remember=bool(remember_me))
-        posts = [PostSchema().dump(post) for post in user.posts]
+        posts = [serialize(post) for post in user.posts]
         return jsonify({'posts': posts}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
@@ -38,25 +39,7 @@ def register():
     password = data.get('password')
     if not (email and username and password):  # checking if necessary credentials were provided
         return jsonify({'message': 'Missing credentials'}), 403
-    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    # querying db to search if email already exists
-    email_exists = User.query.filter_by(email=email).first()
-    if email_exists:
-        return jsonify({'message': 'Email is taken!'}), 403
-
-    # same for username
-    username_exists = User.query.filter_by(username=username).first()
-    if username_exists:
-        return jsonify({'message': 'Username is taken!'}), 403
-
-    # creating user and adding to database
-    user = User(id=str(uuid.uuid4()), username=username, email=email, password_hash=password_hash)
-    db.session.add(user)
-    db.session.commit()
-
-    login_user(user, remember=False)  # logging user in
-    return jsonify({'message': 'New user created!'})
+    return auth_utils.register(username, email, password)
 
 
 @auth_bp.route("/logout")

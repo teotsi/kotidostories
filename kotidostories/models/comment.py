@@ -12,11 +12,10 @@ class Comment(db.Model):
     content = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)
 
-    def serialize(self):
-        return {'id': self.id,
-                'user_id': self.user_id,
-                'content': self.content,
-                'date': self.date}
-
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.date}'
+
+    def update(self, key, value):
+        valid_columns = ['content']
+        if key in valid_columns and getattr(self,key) != value:
+            return setattr(self, key, value)

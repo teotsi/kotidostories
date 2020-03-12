@@ -12,16 +12,13 @@ class Post(db.Model):
     content = db.Column(db.String(), nullable=False)
     title = db.Column(db.String(128), nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)
-    last_edit_date = db.Column(db.DateTime)
-
+    last_edit_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     comments = db.relationship("Comment", backref="post")
-
-    def serialize(self):
-        return {'id': self.id,
-                'user_id': self.user_id,
-                'content': self.content,
-                'title': self.title,
-                'date': self.date}
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'
+
+    def update(self, key, value):
+        valid_columns = ['content', 'title', 'date']
+        if key in valid_columns and getattr(self,key) != value:
+            return setattr(self, key, value)
