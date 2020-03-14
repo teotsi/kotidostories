@@ -11,6 +11,8 @@ class Comment(db.Model):
     post_id = db.Column(db.String(), ForeignKey('post.id'), nullable=False)
     content = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)
+    from_author = db.Column(db.Boolean(), default=False)
+    hidden = db.Column(db.Boolean(), default=False)
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.date}'

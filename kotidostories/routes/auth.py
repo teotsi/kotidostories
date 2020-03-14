@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_cors import cross_origin
 from flask_login import login_user, current_user, logout_user
 
 from kotidostories import bcrypt
@@ -46,3 +47,4 @@ def register():
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out!'})
+

@@ -1,6 +1,7 @@
 import uuid
 
 from flask import Blueprint, jsonify, request
+from flask_cors import cross_origin
 from flask_login import current_user
 
 from kotidostories import db
@@ -24,16 +25,18 @@ def get_posts(user=None):
 
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required
+@cross_origin()
 def upload_post(user=None):
     if current_user.username == user:
         data = request.get_json()
         content = data.get('content')
         title = data.get('title')
-        post = Post(id=str(uuid.uuid4()), user_id=current_user.id, content=content, title=title)
+        preview = data.get('preview')
+        post = Post(id=str(uuid.uuid4()), user_id=current_user.id, content=content, title=title, preview=preview)
         db.session.add(post)
         db.session.commit()
-        return jsonify({"post": serialize(post), "message": "Put post successfully!"})
-    return jsonify({'message': 'No access'}), 403
+        return jsonify({"post": serialize(post), "message": "Put post successfully!"}),{'Access-Control-Allow-Origin': '*'}
+    return jsonify({'message': 'No access'}), 403,{'Access-Control-Allow-Origin': '*'}
 
 
 @posting_bp.route('posts/<string:post_id>', methods=['DELETE'])

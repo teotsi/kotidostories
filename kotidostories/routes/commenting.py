@@ -48,3 +48,4 @@ def edit_comment(user=None, post_id=None):
         db.session.commit()
         return jsonify({'message': 'Edited comment'})
     return jsonify({'message': 'Invalid'}), 403
+

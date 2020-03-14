@@ -3,12 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_cors import CORS, cross_origin
 
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -19,6 +19,8 @@ def create_app(test_config=None):
         app.config.from_object('kotidostories.config.Config')
     # initializing db
     db.init_app(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
+    cors = CORS(app)
 
     # configuring authentication manager
     login_manager.login_view = 'auth.log_in'
