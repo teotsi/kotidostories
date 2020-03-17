@@ -17,6 +17,7 @@ def log_in():
         return jsonify({'message': 'Already authenticated'}), 200
 
     data = request.get_json()
+    print(request.data)
     email = data['email']
     password = data['password']
     remember_me = data['remember_me']
@@ -42,9 +43,13 @@ def register():
         return jsonify({'message': 'Missing credentials'}), 403
     return auth_utils.register(username, email, password)
 
+@auth_bp.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 @auth_bp.route("/logout")
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out!'})
-

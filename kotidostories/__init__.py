@@ -1,14 +1,15 @@
-from flask_marshmallow import Marshmallow
-from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 from flask_login import LoginManager
-from flask_cors import CORS, cross_origin
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -20,7 +21,6 @@ def create_app(test_config=None):
     # initializing db
     db.init_app(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
-    cors = CORS(app)
 
     # configuring authentication manager
     login_manager.login_view = 'auth.log_in'
@@ -40,4 +40,11 @@ def create_app(test_config=None):
         app.register_blueprint(auth_bp)
         app.register_blueprint(posting_bp)
         app.register_blueprint(commenting_bp)
+
+        @app.after_request
+        def after_request(response):
+            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+            return response
     return app

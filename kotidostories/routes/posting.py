@@ -8,7 +8,6 @@ from kotidostories import db
 from kotidostories.auth_utils import auth_required, serialize
 from kotidostories.models import User, Post, Comment
 from kotidostories.schemas.PostSchema import PostSchema
-
 post_schema = PostSchema()
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -25,8 +24,8 @@ def get_posts(user=None):
 
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required
-@cross_origin()
 def upload_post(user=None):
+    print("yooo upload")
     if current_user.username == user:
         data = request.get_json()
         content = data.get('content')
@@ -35,8 +34,8 @@ def upload_post(user=None):
         post = Post(id=str(uuid.uuid4()), user_id=current_user.id, content=content, title=title, preview=preview)
         db.session.add(post)
         db.session.commit()
-        return jsonify({"post": serialize(post), "message": "Put post successfully!"}),{'Access-Control-Allow-Origin': '*'}
-    return jsonify({'message': 'No access'}), 403,{'Access-Control-Allow-Origin': '*'}
+        return jsonify({"post": serialize(post), "message": "Put post successfully!"})
+    return jsonify({'message': 'No access'}), 403
 
 
 @posting_bp.route('posts/<string:post_id>', methods=['DELETE'])
