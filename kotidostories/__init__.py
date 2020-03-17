@@ -46,5 +46,6 @@ def create_app(test_config=None):
             response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
             response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+            response.headers.add('Access-Control-Allow-Credentials','true')
             return response
     return app

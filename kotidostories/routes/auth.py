@@ -11,7 +11,7 @@ auth_bp = Blueprint('auth_bp', __name__)
 post_schema = PostSchema()
 
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login/', methods=['POST'])
 def log_in():
     if current_user.is_authenticated:  # if user is logged in register shouldn't be accessible
         return jsonify({'message': 'Already authenticated'}), 200
@@ -43,11 +43,6 @@ def register():
         return jsonify({'message': 'Missing credentials'}), 403
     return auth_utils.register(username, email, password)
 
-@auth_bp.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    return response
 
 @auth_bp.route("/logout")
 def logout():
