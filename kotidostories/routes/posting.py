@@ -1,13 +1,13 @@
 import uuid
 
 from flask import Blueprint, jsonify, request
-from flask_cors import cross_origin
 from flask_login import current_user
 
 from kotidostories import db
 from kotidostories.auth_utils import auth_required, serialize
 from kotidostories.models import User, Post, Comment
 from kotidostories.schemas.PostSchema import PostSchema
+
 post_schema = PostSchema()
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -71,6 +71,12 @@ def update_post(user=None, post_id=None):
 
 @posting_bp.route('/')
 def get_user(user=None):
+    if user == 'me':
+        if current_user.is_authenticated:
+            return jsonify({'user': serialize(current_user._get_current_object())})
+        else:
+            return jsonify({'message': 'You need to be logged in'}), 403
+
     user_info = User.query.filter_by(username=user).first_or_404()
     return jsonify({"user": serialize(user_info)})
 

@@ -10,7 +10,6 @@ from kotidostories.schemas.PostSchema import PostSchema
 auth_bp = Blueprint('auth_bp', __name__)
 post_schema = PostSchema()
 
-
 @auth_bp.route('/login/', methods=['POST'])
 def log_in():
     if current_user.is_authenticated:  # if user is logged in register shouldn't be accessible
@@ -25,7 +24,8 @@ def log_in():
     if user and bcrypt.check_password_hash(user.password_hash, password):
         login_user(user, remember=bool(remember_me))
         posts = [serialize(post) for post in user.posts]
-        return jsonify({'posts': posts}), 200
+        return jsonify({'posts': posts,
+                        'user':'test'}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
 
