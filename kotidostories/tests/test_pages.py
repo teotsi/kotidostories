@@ -29,14 +29,14 @@ def test_up(client):
     assert 'OK' in rv.status
 
 
-
-def test_register(client):
-    rv = client.post('/register', json={"email": "test@test.gs",
-                                        "username": "teosss",
-                                        "password": "pass",
-                                        "remember_me": "True"
-                                        })
-    assert 'OK' in rv.status
+#
+# def test_register(client):
+#     rv = client.post('/register', json={"email": "test@test.gs",
+#                                         "username": "teosss",
+#                                         "password": "pass",
+#                                         "remember_me": "True"
+#                                         })
+#     assert 'OK' in rv.status
 
 #
 # def test_log_in(client):
@@ -53,7 +53,7 @@ def test_register(client):
 #                                                })
 #     assert 'OK' in rv.status
 #
-
-def test_log_out(client):
-    rv = client.get('/logout')
-    assert 'OK' in rv.status
+#
+# def test_log_out(client):
+#     rv = client.get('/logout')
+#     assert 'OK' in rv.status
