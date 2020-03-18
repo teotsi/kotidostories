@@ -23,4 +23,4 @@ class User(db.Model, UserMixin):
 
 
     def __repr__(self):
-        return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}'
+        return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}, {self.posts}'
