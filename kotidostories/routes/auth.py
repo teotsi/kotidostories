@@ -1,14 +1,15 @@
 from flask import Blueprint, request, jsonify
-from flask_cors import cross_origin
 from flask_login import login_user, current_user, logout_user
 
 from kotidostories import bcrypt
 from kotidostories.auth_utils import serialize, auth_utils
+from kotidostories.auth_utils.auth_utils import send_reset_email
 from kotidostories.models import User
 from kotidostories.schemas.PostSchema import PostSchema
 
 auth_bp = Blueprint('auth_bp', __name__)
 post_schema = PostSchema()
+
 
 @auth_bp.route('/login/', methods=['POST'])
 def log_in():
@@ -25,7 +26,7 @@ def log_in():
         login_user(user, remember=bool(remember_me))
         posts = [serialize(post) for post in user.posts]
         return jsonify({'posts': posts,
-                        'user':'test'}), 200
+                        'user': 'test'}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
 
@@ -44,7 +45,37 @@ def register():
     return auth_utils.register(username, email, password)
 
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout/")
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out!'})
+
+
+@auth_bp.route("/reset/<token>")
+def request_reset_token(token):
+    if current_user.is_authenticated:
+        return jsonify({'message': 'Authenticated'}), 403
+    user = User.verify_reset_token(token)
+    if user:
+        data = request.get_json()
+        password = data.get('password')
+        password_hash = bcrypt.generate_password_hash(password)
+        user.password_hash = password_hash
+        db.session.commit()
+        return jsonify({'message': 'Valid token'}), 200
+    else:
+        return jsonify({'message': 'Invalid token'}), 403
+
+
+@auth_bp.route("/reset", methods=['POST'])
+def reset_token():
+    if current_user.is_authenticated:
+        return jsonify({'message': 'Authenticated'}), 403
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        send_reset_email(user)
+        return jsonify({'message': ''})
+    else:
+        return jsonify({'message': 'Invalid token'}), 403

@@ -11,6 +11,12 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite?check_same_thread=False'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get('EMAIL_FOR_FLASK')
+    MAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+    MAIL_USE_SSL = False
 
 
 class TestConfig(Config):
