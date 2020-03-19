@@ -30,13 +30,13 @@ def serialize(object):
     return cls().dump(object)
 
 
-def send_reset_email(user):
+def send_reset_email(user, frontend='http://localhost:3000/reset?'):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
                   sender='noreply@demo.com',
                   recipients=[user.email])
     msg.body = f'''To reset your password, visit the following link:
-{url_for('auth_bp.reset_token', token=token, _external=True)}
+{frontend}token={token}
 This token is going to be active until {datetime.datetime.now() + datetime.timedelta(minutes=30)}
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
