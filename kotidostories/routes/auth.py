@@ -22,6 +22,8 @@ def log_in():
     password = data['password']
     remember_me = data['remember_me']
     user = User.query.filter_by(email=email).first()  # checking if user exists
+    print(bcrypt.generate_password_hash(password).decode('utf-8')
+)
     if user and bcrypt.check_password_hash(user.password_hash, password):
         login_user(user, remember=bool(remember_me))
         posts = [serialize(post) for post in user.posts]
@@ -52,14 +54,14 @@ def logout():
     return jsonify({'message': 'Logged out!'})
 
 
-@auth_bp.route("/reset/<token>")
-def request_reset_token(token):
+@auth_bp.route("/resetPass/", methods=['POST'])
+def request_reset_token():
+    data = request.get_json()
     if current_user.is_authenticated:
         return jsonify({'message': 'Authenticated'}), 403
-    user = verify_reset_token(token)
+    user = verify_reset_token(data.get('token'))
     if user:
-        data = request.get_json()
-        password = data.get('password')
+        password = data.get('form')['password']
         password_hash = bcrypt.generate_password_hash(password)
         user.password_hash = password_hash
         db.session.commit()
@@ -76,9 +78,9 @@ def verify_token():
     token = data.get('token')
     user = verify_reset_token(token)
     if user:
-        return jsonify({'message': 'Valid token'})
+        return jsonify({'status': True})
     else:
-        return jsonify({'message': 'Invalid token'}), 403
+        return jsonify({'status': False}), 200
 
 
 @auth_bp.route("/reset", methods=['POST'])
