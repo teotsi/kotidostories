@@ -86,3 +86,14 @@ def get_comments(user=None):
     comments = User.query.filter_by(username=user).join(Comment).all()
     print(comments)
     return jsonify({'comments': comments})
+
+
+@posting_bp.route('/follow')
+@auth_required
+def follow_user(user=None):
+    if current_user.username == user:
+        return jsonify({"message": "Can't follow yourself man"}), 200
+    user = User.query.filter_by(username=user).first_or_404()
+    user.followers.append(current_user._get_current_object())
+    db.session.commit()
+    return jsonify({"message": "Follow successful"})
