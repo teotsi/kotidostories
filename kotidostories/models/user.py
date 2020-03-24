@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 from kotidostories import db, login_manager, secret
 
 
@@ -29,6 +30,17 @@ class User(db.Model, UserMixin):
     date = db.Column(db.DateTime(), default=datetime.now)
     posts = db.relationship("Post", backref="user")
     comments = db.relationship("Comment", backref="user")
+    reactions = db.relationship("Reaction", backref="user")
+    followers = db.relationship("User",
+                                secondary="follower",
+                                primaryjoin="User.id==follower.c.user_id",
+                                secondaryjoin="User.id==follower.c.follower_id",
+                                backref="follower")
+    following = db.relationship("User",
+                                secondary="follower",
+                                primaryjoin="User.id==follower.c.follower_id",
+                                secondaryjoin="User.id==follower.c.user_id",
+                                backref="followee")
 
     def get_reset_token(self, expires=1800):
         s = Serializer(secret, expires)

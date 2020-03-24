@@ -14,7 +14,9 @@ class Post(db.Model):
     date = db.Column(db.DateTime, default=datetime.now)
     last_edit_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     preview = db.Column(db.String(), nullable=False)
+    published = db.Column(db.Boolean(), default=True)
     comments = db.relationship("Comment", backref="post")
+    reactions = db.relationship("Reaction", backref="post")
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'

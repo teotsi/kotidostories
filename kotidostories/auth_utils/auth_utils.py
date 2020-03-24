@@ -4,7 +4,7 @@ import importlib
 import uuid
 from functools import wraps
 
-from flask import jsonify, url_for
+from flask import jsonify
 from flask_login import current_user, login_user
 from flask_mail import Message
 
@@ -12,15 +12,20 @@ from kotidostories import bcrypt, db, mail
 from kotidostories.models import User
 
 
-def auth_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if current_user.is_authenticated:
-            return f(*args, **kwargs)
-        else:
+def auth_required(authorization=False):
+    def auth_check(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if current_user.is_authenticated:
+                if authorization:
+                    if current_user.username == kwargs['user']:
+                        return f(*args,**kwargs)
+                else:
+                    return f(*args, **kwargs)
             return jsonify({'message': 'You are not authorized'}), 403
 
-    return decorated
+        return decorated
+    return auth_check
 
 
 def serialize(object):
