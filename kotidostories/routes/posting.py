@@ -15,8 +15,12 @@ posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/'
 @posting_bp.route('posts/', methods=['GET'])
 def get_posts(user=None):
     user = User.query.filter_by(username=user).first()
+    filter=request.args.get('filter')
     if user:
-        posts = [serialize(post) for post in user.posts]
+        if filter == 'following':
+            posts = [serialize(post) for followee in user.following for post in followee.posts]
+        else:
+            posts = [serialize(post) for post in user.posts]
         return jsonify({'posts': posts})
     else:
         return jsonify({'message': 'No such user'}), 403
