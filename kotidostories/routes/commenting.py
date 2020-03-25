@@ -4,7 +4,8 @@ from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
 from kotidostories import db
-from kotidostories.auth_utils import auth_required, serialize
+from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.auth_utils import auth_required
 from kotidostories.models import Comment, Post, User
 
 commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/comments/')

@@ -1,10 +1,9 @@
-import uuid
-
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
 from kotidostories import db
-from kotidostories.auth_utils import auth_required, serialize
+from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.auth_utils import auth_required
 from kotidostories.models import User, Post, Comment
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
@@ -24,12 +23,11 @@ def get_posts(user=None):
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required(authorization=True)
 def upload_post(user=None):
-    print("yooo upload")
     data = request.get_json()
     content = data.get('content')
     title = data.get('title')
     preview = data.get('preview')
-    post = Post(id=str(uuid.uuid4()), user_id=current_user.id, content=content, title=title, preview=preview)
+    post = Post(user_id=current_user.id, content=content, title=title, preview=preview)
     db.session.add(post)
     db.session.commit()
     return jsonify({"post": serialize(post), "message": "Put post successfully!"})
@@ -97,4 +95,3 @@ def unfollow_user(user=None):
     except ValueError:
         return jsonify({'message': 'No follow in the first place'})
     return jsonify({"message": "Unfollow successful"})
-

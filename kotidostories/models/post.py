@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from kotidostories.utils.general_utils import create_id
 from sqlalchemy import ForeignKey
 
 from kotidostories import db
@@ -7,7 +7,7 @@ from kotidostories.models import user
 
 
 class Post(db.Model):
-    id = db.Column(db.String(), primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=create_id)
     user_id = db.Column(db.String(), ForeignKey(user.User.id), nullable=False)
     content = db.Column(db.String(), nullable=False)
     title = db.Column(db.String(128), nullable=False)

@@ -5,7 +5,8 @@ from flask import request
 from flask_login import current_user
 
 from kotidostories import db
-from kotidostories.auth_utils import auth_required, serialize
+from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.auth_utils import auth_required
 from kotidostories.models import Post, Reaction
 
 reacting_bp = Blueprint('reacting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/reaction')
@@ -26,7 +27,7 @@ def react_to_post(user=None, post_id=None):
     from_author = post.user_id == current_user.id
     data = request.get_json()
     reaction_type = data.get('type')
-    reaction = Reaction(id=str(uuid.uuid4()), user_id=current_user.id, post_id=post_id, type=reaction_type,
+    reaction = Reaction(user_id=current_user.id, post_id=post_id, type=reaction_type,
                         from_author=from_author)
     post.reactions.append(reaction)
     db.session.commit()

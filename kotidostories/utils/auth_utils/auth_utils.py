@@ -1,6 +1,5 @@
 # used for routes that require the user to be logged in
 import datetime
-import importlib
 import uuid
 from functools import wraps
 
@@ -19,20 +18,14 @@ def auth_required(authorization=False):
             if current_user.is_authenticated:
                 if authorization:
                     if current_user.username == kwargs['user']:
-                        return f(*args,**kwargs)
+                        return f(*args, **kwargs)
                 else:
                     return f(*args, **kwargs)
             return jsonify({'message': 'You are not authorized'}), 403
 
         return decorated
+
     return auth_check
-
-
-def serialize(object):
-    class_name = f'{type(object).__name__}Schema'
-    cls = getattr(importlib.import_module(f'kotidostories.schemas.{class_name}'), class_name)
-
-    return cls().dump(object)
 
 
 def send_reset_email(user, frontend='http://localhost:3000/reset?'):
@@ -61,7 +54,7 @@ def register(username, email, password, login=True):
         return jsonify({'message': 'Username is taken!'}), 403
 
     # creating user and adding to database
-    user = User(id=str(uuid.uuid4()), username=username, email=email, password_hash=password_hash)
+    user = User(username=username, email=email, password_hash=password_hash)
     db.session.add(user)
     db.session.commit()
     if login:

@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from kotidostories import db, login_manager, secret
+from kotidostories.utils.general_utils import create_id
 
 
 @login_manager.user_loader
@@ -21,7 +22,7 @@ def verify_reset_token(token):
 
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.String(128), primary_key=True)
+    id = db.Column(db.String(128), primary_key=True, default=create_id)
     username = db.Column(db.String(), unique=True, nullable=False)
     first_name = db.Column(db.String())
     last_name = db.Column(db.String())

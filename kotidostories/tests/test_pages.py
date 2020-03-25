@@ -3,7 +3,6 @@ import os
 import pytest
 
 from kotidostories import create_app
-from kotidostories.auth_utils.auth_utils import register
 
 
 @pytest.fixture

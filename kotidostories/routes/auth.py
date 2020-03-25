@@ -2,8 +2,9 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_user, current_user, logout_user
 
 from kotidostories import bcrypt, db
-from kotidostories.auth_utils import serialize, auth_utils
-from kotidostories.auth_utils.auth_utils import send_reset_email
+from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.auth_utils.auth_utils import send_reset_email
+from kotidostories.utils.auth_utils import auth_utils
 from kotidostories.models.user import User, verify_reset_token
 from kotidostories.schemas.PostSchema import PostSchema
 

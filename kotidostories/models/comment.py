@@ -3,10 +3,11 @@ from datetime import datetime
 from sqlalchemy import ForeignKey
 
 from kotidostories import db
+from kotidostories.utils.general_utils import create_id
 
 
 class Comment(db.Model):
-    id = db.Column(db.String(), primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=create_id)
     user_id = db.Column(db.String(), ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.String(), ForeignKey('post.id'), nullable=False)
     content = db.Column(db.String(), nullable=False)
