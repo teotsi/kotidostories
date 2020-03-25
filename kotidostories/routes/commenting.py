@@ -20,7 +20,7 @@ def get_comments(user=None, post_id=None):
 
 
 @commenting_bp.route('/', methods=['POST'])
-@auth_required
+@auth_required()
 def post_comment(user=None, post_id=None):
     data = request.get_json()
     user_data = User.query.filter_by(username=user).first_or_404()

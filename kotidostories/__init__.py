@@ -30,17 +30,20 @@ def create_app(test_config=None):
         import kotidostories.models
         db.create_all()
         mail.init_app(app)
+
         @login_manager.user_loader
         def load_user(user_id):
             from kotidostories.models import User
             return User.query.get(user_id)
 
         # registering blueprints
-        from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp
+        from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp, reacting_bp
+
         app.register_blueprint(landing_bp)
         app.register_blueprint(auth_bp)
         app.register_blueprint(posting_bp)
         app.register_blueprint(commenting_bp)
+        app.register_blueprint(reacting_bp)
 
         @app.after_request
         def after_request(response):

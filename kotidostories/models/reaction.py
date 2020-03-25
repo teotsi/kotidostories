@@ -6,16 +6,16 @@ from sqlalchemy import ForeignKey
 from kotidostories import db
 
 
-class Type(enum.Enum):
-    like = 0
-    love = 1
-    laugh = 2
-    inspiring = 3
+class Type(str, enum.Enum):
+    like = 'like'
+    love = 'love'
+    laugh = 'laugh'
+    inspiring = 'inspiring'
 
 
 class Reaction(db.Model):
     id = db.Column(db.String(), primary_key=True)
-    user_id = db.Column(db.String(), ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(), ForeignKey('user.id'), nullable=False, unique=True)
     post_id = db.Column(db.String(), ForeignKey('post.id'), nullable=False)
     type = db.Column(db.Enum(Type), nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)

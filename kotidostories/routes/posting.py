@@ -6,9 +6,7 @@ from flask_login import current_user
 from kotidostories import db
 from kotidostories.auth_utils import auth_required, serialize
 from kotidostories.models import User, Post, Comment
-from kotidostories.schemas.PostSchema import PostSchema
 
-post_schema = PostSchema()
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
 
@@ -41,23 +39,20 @@ def upload_post(user=None):
 @auth_required(authorization=True)  # users shouldn't be able to delete posts that they haven't authored
 def delete_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
-    if post:
-        db.session.delete(post)
-        db.session.commit()
-        return jsonify({'message': 'Post deleted'})
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'message': 'Post deleted'})
 
 
 @posting_bp.route('posts/<string:post_id>', methods=['PATCH'])
 @auth_required(authorization=True)
 def update_post(user=None, post_id=None):
-    if current_user.username == user:
-        post = Post.query.filter_by(id=post_id).first_or_404()
-        data = request.get_json()
-        for key, value in data.items():
-            post.update(key, value)
-        db.session.commit()
-        return jsonify({"message": 'Updated post!'})
-    return jsonify({'message': 'You are not the author!'}), 403
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    data = request.get_json()
+    for key, value in data.items():
+        post.update(key, value)
+    db.session.commit()
+    return jsonify({"message": 'Updated post!'})
 
 
 @posting_bp.route('/')
@@ -102,3 +97,4 @@ def unfollow_user(user=None):
     except ValueError:
         return jsonify({'message': 'No follow in the first place'})
     return jsonify({"message": "Unfollow successful"})
+
