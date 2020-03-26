@@ -14,6 +14,7 @@ class Comment(db.Model):
     date = db.Column(db.DateTime, default=datetime.now)
     from_author = db.Column(db.Boolean(), default=False)
     hidden = db.Column(db.Boolean(), default=False)
+    user = db.relationship("User", back_populates="comments")
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.date}'

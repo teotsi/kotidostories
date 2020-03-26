@@ -17,6 +17,7 @@ class Post(db.Model):
     published = db.Column(db.Boolean(), default=True)
     comments = db.relationship("Comment", backref="post")
     reactions = db.relationship("Reaction", backref="post")
+    user = db.relationship("User", back_populates="posts")
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'

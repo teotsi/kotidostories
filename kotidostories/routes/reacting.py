@@ -1,13 +1,11 @@
-import uuid
-
 from flask import Blueprint, jsonify
 from flask import request
 from flask_login import current_user
 
 from kotidostories import db
-from kotidostories.utils.general_utils import serialize
-from kotidostories.utils.auth_utils import auth_required
 from kotidostories.models import Post, Reaction
+from kotidostories.utils.auth_utils import auth_required
+from kotidostories.utils.general_utils import serialize
 
 reacting_bp = Blueprint('reacting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/reaction')
 
@@ -24,12 +22,20 @@ def get_post_reactions(user=None, post_id=None):
 @auth_required(authorization=True)
 def react_to_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
+
     from_author = post.user_id == current_user.id
     data = request.get_json()
     reaction_type = data.get('type')
-    reaction = Reaction(user_id=current_user.id, post_id=post_id, type=reaction_type,
-                        from_author=from_author)
-    post.reactions.append(reaction)
+    reaction_exists = next((reaction for reaction in post.reactions
+                            if reaction.user_id == current_user.id), None)
+
+    if reaction_exists:
+        reaction = reaction_exists
+        reaction.type = reaction_type
+    else:
+        reaction = Reaction(user_id=current_user.id, post_id=post_id, type=reaction_type,
+                            from_author=from_author)
+        post.reactions.append(reaction)
     db.session.commit()
     return jsonify({'message': 'react successful',
                     'reaction': serialize(reaction)})

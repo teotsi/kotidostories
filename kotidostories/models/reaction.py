@@ -24,8 +24,3 @@ class Reaction(db.Model):
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.type}, {self.date}'
-
-    def update(self, key, value):
-        valid_columns = ['content']
-        if key in valid_columns and getattr(self,key) != value:
-            return setattr(self, key, value)

@@ -29,8 +29,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime(), default=datetime.now)
-    posts = db.relationship("Post", backref="user")
-    comments = db.relationship("Comment", backref="user")
+    posts = db.relationship("Post", back_populates="user")
+    comments = db.relationship("Comment", back_populates="user")
     reactions = db.relationship("Reaction", backref="user")
     followers = db.relationship("User",
                                 secondary="follower",
