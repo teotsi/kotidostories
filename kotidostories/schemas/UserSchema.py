@@ -9,6 +9,6 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         model = User
 
-    posts = Nested('PostSchema', many=True, exclude=['user'])
+    posts = Nested('PostSchema', many=True)
     comments = Nested('CommentSchema', many=True, exclude=['user'])
     reactions = Nested('ReactionSchema', many=True, exclude=['user'])
