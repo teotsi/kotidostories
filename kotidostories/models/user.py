@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime(), default=datetime.now)
+    img = db.Column(db.String(), server_default="pictures/profile/default.png")
     posts = db.relationship("Post", back_populates="user")
     comments = db.relationship("Comment", back_populates="user")
     reactions = db.relationship("Reaction", backref="user")
@@ -46,6 +47,11 @@ class User(db.Model, UserMixin):
     def get_reset_token(self, expires=1800):
         s = Serializer(secret, expires)
         return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    def update(self, key, value):
+        valid_columns = ['img', 'first_name', 'last_name', 'username']
+        if key in valid_columns and getattr(self, key) != value:
+            return setattr(self, key, value)
 
     def __repr__(self):
         return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}, {self.posts}'

@@ -5,6 +5,8 @@ from flask_mail import Mail
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
+from .utils.general_utils import create_pictures_directory
+
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
@@ -20,6 +22,8 @@ def create_app(test_config=None):
     else:
         # loading config.py
         app.config.from_object('kotidostories.config.Config')
+    # checking if pictures directory exists
+    create_pictures_directory()
     # initializing db
     db.init_app(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
@@ -37,14 +41,15 @@ def create_app(test_config=None):
             return User.query.get(user_id)
 
         # registering blueprints
-        from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp, reacting_bp
+        from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp, reacting_bp, images_bp
+
 
         app.register_blueprint(landing_bp)
         app.register_blueprint(auth_bp)
         app.register_blueprint(posting_bp)
         app.register_blueprint(commenting_bp)
         app.register_blueprint(reacting_bp)
-
+        app.register_blueprint(images_bp)
         @app.after_request
         def after_request(response):
             response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')

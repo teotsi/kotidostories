@@ -28,14 +28,21 @@ class Post(db.Model):
     last_edit_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     preview = db.Column(db.String(), nullable=False)
     published = db.Column(db.Boolean(), default=True)
+    img = db.Column(db.String(), server_default='pictures/post/default.png')
     comments = db.relationship("Comment", backref="post")
     reactions = db.relationship("Reaction", backref="post")
     user = db.relationship("User", back_populates="posts")
+
+    def __init__(self, **kwargs):
+        if 'id' not in kwargs:
+            id = create_id()
+            kwargs['id'] = id
+        super(Post, self).__init__(**kwargs)
 
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'
 
     def update(self, key, value):
-        valid_columns = ['content', 'title', 'date', 'preview','category']
+        valid_columns = ['content', 'title', 'date', 'preview', 'category']
         if key in valid_columns and getattr(self, key) != value:
             return setattr(self, key, value)
