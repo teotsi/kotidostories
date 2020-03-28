@@ -1,30 +1,30 @@
-"""add post type
+"""Add post img
 
-Revision ID: 45ca9989d638
-Revises: 
-Create Date: 2020-03-27 00:32:44.405742
+Revision ID: 80d57accd844
+Revises: 45ca9989d638
+Create Date: 2020-03-28 04:20:50.289404
 
 """
-from alembic import op
-from sqlalchemy import Column, Enum
 import sqlalchemy as sa
+from alembic import op
+from sqlalchemy import Column, String
+
 # revision identifiers, used by Alembic.
 
 
-revision = '45ca9989d638'
-down_revision = None
+revision = '80d57accd844'
+down_revision = '45ca9989d638'
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    with op.batch_alter_table('post') as batch_op:
-        op.add_column('post', Column('category', Enum(), nullable=False, server_default='story'))
-        batch_op.alter_column('category', 'post', server_default=None)
+    op.add_column('post', Column('post_img', String(), server_default='pictures/post/default.png'))
 
 
 def downgrade():
-    drop_column_sqlite('post', ['category'])
+    drop_column_sqlite('post', ['post_img'])
+
 
 def drop_column_sqlite(tablename, columns):
     """ column dropping functionality for SQLite

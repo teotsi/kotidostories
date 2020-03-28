@@ -28,6 +28,7 @@ class Post(db.Model):
     last_edit_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     preview = db.Column(db.String(), nullable=False)
     published = db.Column(db.Boolean(), default=True)
+    post_img = db.Column(db.String(), server_default='pictures/post/default.png')
     comments = db.relationship("Comment", backref="post")
     reactions = db.relationship("Reaction", backref="post")
     user = db.relationship("User", back_populates="posts")
