@@ -48,5 +48,10 @@ class User(db.Model, UserMixin):
         s = Serializer(secret, expires)
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
+    def update(self, key, value):
+        valid_columns = ['img', 'first_name', 'last_name', 'username']
+        if key in valid_columns and getattr(self, key) != value:
+            return setattr(self, key, value)
+
     def __repr__(self):
         return f'{self.id}, {self.username}, {self.first_name}, {self.last_name}, {self.email}, {self.posts}'

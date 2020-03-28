@@ -33,10 +33,16 @@ class Post(db.Model):
     reactions = db.relationship("Reaction", backref="post")
     user = db.relationship("User", back_populates="posts")
 
+    def __init__(self, **kwargs):
+        if 'id' not in kwargs:
+            id = create_id()
+            kwargs['id'] = id
+        super(Post, self).__init__(**kwargs)
+
     def __repr__(self):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'
 
     def update(self, key, value):
-        valid_columns = ['content', 'title', 'date', 'preview','category']
+        valid_columns = ['content', 'title', 'date', 'preview', 'category']
         if key in valid_columns and getattr(self, key) != value:
             return setattr(self, key, value)

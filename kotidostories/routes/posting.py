@@ -1,10 +1,12 @@
+import json
+
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
 from kotidostories import db
 from kotidostories.models import User, Post, Comment
 from kotidostories.utils.auth_utils import auth_required
-from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.general_utils import serialize, create_pictures_directory
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -23,13 +25,22 @@ def get_posts(user=None):
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required(authorization=True)
 def upload_post(user=None):
-    data = request.get_json()
+    data = json.loads(request.form.getlist('data')[0])
     content = data.get('content')
     title = data.get('title')
     preview = data.get('preview')
     category = data.get('category')
     post = Post(user_id=current_user.id, content=content, title=title, preview=preview, category=category)
+    print(post)
+    if 'image' in request.files:
+        image = request.files['image']
+        image_extension = image.filename.split('.')[-1]
+        image_name = f'{post.id}.{image_extension}'
+        create_pictures_directory(user_id=current_user.id, post_id=post.id)
+        post.img = f'pictures/post/{current_user.id}/{post.id}/' + image_name
+        image.save(post.img)
     db.session.add(post)
+
     db.session.commit()
     return jsonify({"post": serialize(post), "message": "Put post successfully!"})
 
@@ -47,7 +58,15 @@ def delete_post(user=None, post_id=None):
 @auth_required(authorization=True)
 def update_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
-    data = request.get_json()
+    data = json.loads(request.form.getlist('data')[0])
+    if 'image' in request.files:
+        if 'image' in request.files:
+            image = request.files['image']
+            image_extension = image.filename.split('.')[-1]
+            image_name = f'{post.id}.{image_extension}'
+            create_pictures_directory(user_id=current_user.id, post_id=post_id)
+            post.img = f'pictures/post/{current_user.id}/{post_id}/' + image_name
+            image.save(post.img)
     for key, value in data.items():
         post.update(key, value)
     db.session.commit()
@@ -63,6 +82,25 @@ def get_user(user=None):
             return jsonify({'message': 'You need to be logged in'}), 403
     user_info = User.query.filter_by(username=user).first_or_404()
     return jsonify({"user": serialize(user_info)})
+
+
+@posting_bp.route('/', methods=['PUT'])
+@auth_required(authorization=True)
+def update_user(user=None):
+    user = current_user
+    data = json.loads(request.form.getlist('data')[0])
+    if 'image' in request.files:
+        if 'image' in request.files:
+            image = request.files['image']
+            image_extension = image.filename.split('.')[-1]
+            image_name = f'{current_user.id}.{image_extension}'
+            create_pictures_directory(user_id=current_user.id)
+            user.img = f'pictures/profile/{user.id}/' + image_name
+            image.save(user.img)
+    for key, value in data.items():
+        user.update(key, value)
+    db.session.commit()
+    return jsonify({"user": serialize(current_user._get_current_object())})
 
 
 @posting_bp.route('/comments')
