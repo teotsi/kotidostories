@@ -5,6 +5,8 @@ from flask_mail import Mail
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
+from .utils.general_utils import create_pictures_directory
+
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
@@ -20,6 +22,8 @@ def create_app(test_config=None):
     else:
         # loading config.py
         app.config.from_object('kotidostories.config.Config')
+    # checking if pictures directory exists
+    create_pictures_directory()
     # initializing db
     db.init_app(app)
     app.config['CORS_HEADERS'] = 'Content-Type'

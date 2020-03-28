@@ -2,3 +2,6 @@
 /.idea/
 /.vscode/
 /venv/
+pictures/**/*
+!pictures/profile/default.png
+!pictures/post/default.png
