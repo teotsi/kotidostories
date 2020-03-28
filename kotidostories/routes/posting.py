@@ -1,12 +1,10 @@
-import base64
-
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
 from kotidostories import db
-from kotidostories.utils.general_utils import serialize
-from kotidostories.utils.auth_utils import auth_required
 from kotidostories.models import User, Post, Comment
+from kotidostories.utils.auth_utils import auth_required
+from kotidostories.utils.general_utils import serialize
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -64,10 +62,7 @@ def get_user(user=None):
         else:
             return jsonify({'message': 'You need to be logged in'}), 403
     user_info = User.query.filter_by(username=user).first_or_404()
-    with open(user_info.user_img, "rb") as imgf:
-        img = base64.b64encode(imgf.read()).decode()
-    return jsonify({"user": serialize(user_info),
-                    'img':img})
+    return jsonify({"user": serialize(user_info)})
 
 
 @posting_bp.route('/comments')
