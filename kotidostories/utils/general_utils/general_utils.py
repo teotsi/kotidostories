@@ -1,6 +1,6 @@
 import importlib
 import uuid
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PurePosixPath
 
 
 def create_id():
@@ -22,6 +22,8 @@ def create_pictures_directory(user_id="", post_id=""):
 
 
 def save_img(image, obj, user_id, post_id=''):
+    if image.filename == '':
+        return
     image_extension = image.filename.split('.')[-1]
     image_name = f'{obj.id}.{image_extension}'
     create_pictures_directory(user_id=user_id, post_id=post_id)
