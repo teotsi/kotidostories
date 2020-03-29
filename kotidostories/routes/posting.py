@@ -6,7 +6,7 @@ from flask_login import current_user
 from kotidostories import db
 from kotidostories.models import User, Post, Comment
 from kotidostories.utils.auth_utils import auth_required
-from kotidostories.utils.general_utils import serialize, create_pictures_directory
+from kotidostories.utils.general_utils import serialize, save_img
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -31,14 +31,8 @@ def upload_post(user=None):
     preview = data.get('preview')
     category = data.get('category')
     post = Post(user_id=current_user.id, content=content, title=title, preview=preview, category=category)
-    print(post)
     if 'image' in request.files:
-        image = request.files['image']
-        image_extension = image.filename.split('.')[-1]
-        image_name = f'{post.id}.{image_extension}'
-        create_pictures_directory(user_id=current_user.id, post_id=post.id)
-        post.img = f'pictures/post/{current_user.id}/{post.id}/' + image_name
-        image.save(post.img)
+        save_img(request.files['image'], post, current_user.id, post.id)
     db.session.add(post)
 
     db.session.commit()
@@ -60,13 +54,7 @@ def update_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
     data = json.loads(request.form.getlist('data')[0])
     if 'image' in request.files:
-        if 'image' in request.files:
-            image = request.files['image']
-            image_extension = image.filename.split('.')[-1]
-            image_name = f'{post.id}.{image_extension}'
-            create_pictures_directory(user_id=current_user.id, post_id=post_id)
-            post.img = f'pictures/post/{current_user.id}/{post_id}/' + image_name
-            image.save(post.img)
+        save_img(request.files['image'], post, current_user.id, post_id)
     for key, value in data.items():
         post.update(key, value)
     db.session.commit()
@@ -90,13 +78,7 @@ def update_user(user=None):
     user = current_user
     data = json.loads(request.form.getlist('data')[0])
     if 'image' in request.files:
-        if 'image' in request.files:
-            image = request.files['image']
-            image_extension = image.filename.split('.')[-1]
-            image_name = f'{current_user.id}.{image_extension}'
-            create_pictures_directory(user_id=current_user.id)
-            user.img = f'pictures/profile/{user.id}/' + image_name
-            image.save(user.img)
+        save_img(request.files['image'], user, user.id)
     for key, value in data.items():
         user.update(key, value)
     db.session.commit()
@@ -106,7 +88,6 @@ def update_user(user=None):
 @posting_bp.route('/comments')
 def get_comments(user=None):
     comments = User.query.filter_by(username=user).join(Comment).all()
-    print(comments)
     return jsonify({'comments': comments})
 
 
