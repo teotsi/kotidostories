@@ -5,7 +5,7 @@ from flask_login import current_user
 
 from kotidostories import db
 from kotidostories.models import User, Post, Comment
-from kotidostories.utils.auth_utils import auth_required
+from kotidostories.utils.auth_utils import auth_required, get_request_data
 from kotidostories.utils.general_utils import serialize, save_img
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
@@ -25,7 +25,7 @@ def get_posts(user=None):
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required(authorization=True)
 def upload_post(user=None):
-    data = json.loads(request.form.getlist('data')[0])
+    data = get_request_data(request)
     content = data.get('content')
     title = data.get('title')
     preview = data.get('preview')
@@ -52,7 +52,7 @@ def delete_post(user=None, post_id=None):
 @auth_required(authorization=True)
 def update_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
-    data = json.loads(request.form.getlist('data')[0])
+    data = get_request_data(request)
     if 'image' in request.files:
         save_img(request.files['image'], post, current_user.id, post_id)
     for key, value in data.items():
@@ -76,10 +76,7 @@ def get_user(user=None):
 @auth_required(authorization=True)
 def update_user(user=None):
     user = current_user
-    if not request.get_json():
-        data = json.loads(request.form.getlist('data')[0])
-    else:
-        data = request.get_json()
+    data = get_request_data(request)
     if 'image' in request.files:
         save_img(request.files['image'], user, user.id)
     for key, value in data.items():
