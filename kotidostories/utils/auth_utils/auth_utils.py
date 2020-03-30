@@ -1,6 +1,6 @@
 # used for routes that require the user to be logged in
 import datetime
-import uuid
+import json
 from functools import wraps
 
 from flask import jsonify
@@ -60,3 +60,10 @@ def register(username, email, password, login=True):
     if login:
         login_user(user, remember=False)  # logging user in
     return jsonify({'message': 'New user created!'})
+
+
+def get_request_data(request):
+    data = request.get_json()
+    if not data:
+        return json.loads(request.form.getlist('data')[0])
+    return data

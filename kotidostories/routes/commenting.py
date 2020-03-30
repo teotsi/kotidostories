@@ -1,11 +1,9 @@
-import uuid
-
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
 from kotidostories import db
 from kotidostories.models import Comment, Post, User
-from kotidostories.utils.auth_utils import auth_required
+from kotidostories.utils.auth_utils import auth_required, get_request_data
 from kotidostories.utils.general_utils import serialize
 
 commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/comments/')
@@ -23,7 +21,7 @@ def get_comments(user=None, post_id=None):
 @commenting_bp.route('/', methods=['POST'])
 @auth_required()
 def post_comment(user=None, post_id=None):
-    data = request.get_json()
+    data = get_request_data(request)
     user_data = User.query.filter_by(username=user).first_or_404()
     user_posts = user_data.posts
     for post in user_posts:
@@ -43,17 +41,17 @@ def post_comment(user=None, post_id=None):
 @commenting_bp.route('/', methods=['PATCH'])
 @auth_required()
 def edit_comment(user=None, post_id=None):
-    data = request.get_json()
+    data = get_request_data(request)
     user_data = User.query.filter_by(username=user).first_or_404()
     user_posts = user_data.posts
     for post in user_posts:
         if post.id == post_id:
             comment_id = data.get('id')
             for comment in post.comments:
-                if comment.id==comment_id:
+                if comment.id == comment_id:
                     for key, value in data.items():
                         comment.update(key, value)
                         db.session.commit()
                         return jsonify({'message': 'Edited comment'})
-            return jsonify({'message':'Not found'}), 404
+            return jsonify({'message': 'Not found'}), 404
     return jsonify({'message': 'Invalid'}), 403
