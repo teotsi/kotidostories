@@ -43,7 +43,6 @@ def register():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
-    print(data)
     if not (email and username and password):  # checking if necessary credentials were provided
         return jsonify({'message': 'Missing credentials'}), 403
     return auth_utils.register(username, email, password)
@@ -103,3 +102,4 @@ def check_username(username=None):
         return jsonify({"message": "username is available!"})
     else:
         return jsonify({"message": "Username is unavailable"}), 401
+

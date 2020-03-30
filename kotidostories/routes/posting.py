@@ -76,7 +76,10 @@ def get_user(user=None):
 @auth_required(authorization=True)
 def update_user(user=None):
     user = current_user
-    data = json.loads(request.form.getlist('data')[0])
+    if not request.get_json():
+        data = json.loads(request.form.getlist('data')[0])
+    else:
+        data = request.get_json()
     if 'image' in request.files:
         save_img(request.files['image'], user, user.id)
     for key, value in data.items():
