@@ -15,6 +15,7 @@ commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:u
 def get_comments(user=None, post_id=None):
     comments = Post.query.filter_by(id=post_id).join(Comment).all()
     print(comments)
+    comments = [serialize(comment) for comment in comments]
     return jsonify({'comments': comments})
 
 
