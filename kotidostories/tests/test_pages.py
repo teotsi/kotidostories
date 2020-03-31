@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from flask_login import current_user
 
 from kotidostories import create_app
 from kotidostories.models import User
@@ -42,6 +43,13 @@ def client(app):
 def test_up(client):
     rv = client.get('/')
     assert 'OK' in rv.status
+
+
+def test_check_username(client):
+    rv = client.get('/checkUsername/testidis2') #testidis2 already exists!
+    assert '401' in rv.status
+    rv = client.get('/checkUsername/testidis') #testidis is available
+    assert '200' in rv.status
 
 
 def test_register(client):
@@ -114,6 +122,24 @@ def test_follow(app, client):
     rv = client.delete('user/testidis2/follow')
     user = get_user(client)
     assert not user['following']  # asserting unfollow
+
+
+def test_comment(app, client):
+    @app.login_manager.request_loader
+    def load_user_from_request(request):
+        return User.query.filter_by(username='testidis').first()
+
+    post_id = current_user.posts[0].id
+    rv = client.get(f'/user/{current_user.username}/posts/{post_id}/comments/')
+    assert 'OK' in rv.status  # asserting successful follow
+    comments = json.loads(rv.data)['comments']
+    assert len(comments) == 0
+    rv = client.post(f'/user/{current_user.username}/posts/{post_id}/comments/',
+                     json={"content": "That story is great!"})
+    assert 'OK' in rv.status
+    rv = client.get(f'/user/{current_user.username}/posts/{current_user.posts[0].id}/comments/')
+    comments = json.loads(rv.data)['comments']
+    assert len(comments) == 1
 
 
 @pytest.fixture(scope="session", autouse=True)
