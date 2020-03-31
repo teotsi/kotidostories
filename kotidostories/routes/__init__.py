@@ -4,3 +4,4 @@ from .posting import posting_bp
 from .commenting import commenting_bp
 from .reacting import reacting_bp
 from .images import images_bp
+from .discover import discover_bp
