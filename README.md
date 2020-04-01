@@ -7,9 +7,12 @@ Flask-based online stories API. WIP. Backend of a project developed for INF183 c
 Designed to communicate with a Nuxt.js frontend but it should work with any framework that supports HTTP-only cookies.
 Implemented features:
  * User Authentication using HTTP-Only Cookie. This allows users to register, login, logout, and perform tasks that require authentication(such as posting stories and interacting with others.)
- * Upload post, edit post, delete post
- * Get user by username
- * Comment on post
+ * Get post,Upload post, edit post, delete post. Also apply query parameters to filter posts
+ * Get user, register user, update user 
+ * Comment on post, edit comment, delete comment
+ * Add and update user/post image
+ * Add reaction, edit reaction, delete reaction
+ * Follow other users
  * Reset password via email (Using a token that expires after 30 minutes)
  
 ### Setting up dev environment
@@ -24,6 +27,8 @@ pip install -e .
 After that, just run `python -m run` for now.
 
 To enable password reset via email, set Environment Variables `EMAIL_FOR_FLASK` and `EMAIL_PASS` for your OS. They are not included in the configuration for obvious reasons.
+Also, you wil need to set `PIC_FLASK` to the project subfolder in your current working directory. For example, if your file tree looks something
+like `projects/kotidostories/...`, and you are working on `projects`, then `PIC_FLASK` should be set to `kotidostories`. It is not necessary,
+but otherwise pictures will most likely not be served as intended.
 
-
-To skip Travis/CI tests, just add [ci skip] at the end of your commit message.
+To skip Travis/CI tests, just add `[ci skip]` at the end of your commit message.

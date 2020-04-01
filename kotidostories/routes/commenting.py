@@ -13,9 +13,8 @@ commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:u
 
 @commenting_bp.route('/')
 def get_comments(user=None, post_id=None):
-    comments = Post.query.filter_by(id=post_id).join(Comment).all()
-    print(comments)
-    comments = [serialize(comment) for comment in comments]
+    post = Post.query.filter_by(id=post_id).first()
+    comments = [serialize(comment) for comment in post.comments]
     return jsonify({'comments': comments})
 
 
@@ -26,7 +25,6 @@ def post_comment(user=None, post_id=None):
     user_data = User.query.filter_by(username=user).first_or_404()
     user_posts = user_data.posts
     for post in user_posts:
-        print(post.id)
         if post.id == post_id:
             content = data.get('content')
             user_id = current_user.id
@@ -39,15 +37,14 @@ def post_comment(user=None, post_id=None):
     return jsonify({'message': 'invalid'}), 403
 
 
-@commenting_bp.route('/', methods=['PATCH'])
+@commenting_bp.route('/<string:comment_id>', methods=['PATCH'])
 @auth_required()
-def edit_comment(user=None, post_id=None):
+def edit_comment(user=None, post_id=None, comment_id=None):
     data = get_request_data(request)
     user_data = User.query.filter_by(username=user).first_or_404()
     user_posts = user_data.posts
     for post in user_posts:
         if post.id == post_id:
-            comment_id = data.get('id')
             for comment in post.comments:
                 if comment.id == comment_id:
                     for key, value in data.items():
