@@ -30,7 +30,7 @@ class Post(db.Model):
     published = db.Column(db.Boolean(), default=True)
     img = db.Column(db.String(), server_default='pictures/post/default.png')
     comments = db.relationship("Comment", backref="post")
-    reactions = db.relationship("Reaction", backref="post")
+    reactions = db.relationship("Reaction", backref="post", lazy='dynamic')
     user = db.relationship("User", back_populates="posts")
 
     def __init__(self, **kwargs):

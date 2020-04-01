@@ -155,6 +155,38 @@ def test_comment(app, client):
     assert comments[0]['content'] != content  # asserting that the change was successful
 
 
+def test_reaction(app, client):
+    @app.login_manager.request_loader
+    def load_user_from_request(request):
+        return User.query.filter_by(username='testidis').first()
+
+    user = get_user(client)
+    post_id = user['posts'][0]['id']
+    username = user['username']
+
+    rv = client.get(f'/user/{username}/posts/{post_id}/reaction/')
+    assert 'OK' in rv.status  # asserting successful reaction GET
+    reactions = json.loads(rv.data)['reactions']
+    assert len(reactions) == 0
+    assert 'OK' in rv.status
+
+    rv = client.post(f'/user/{username}/posts/{post_id}/reaction/', json={'type': 'love'})
+    assert 'OK' in rv.status  # asserting successful reaction POST
+    rv = client.get(f'/user/{current_user.username}/posts/{post_id}/reaction/')
+    reactions = json.loads(rv.data)['reactions']
+    initial_type = 'love'
+    assert reactions[0]['type'] == initial_type
+
+    reaction_id = reactions[0]['id']
+
+    rv = client.put(f'/user/{username}/posts/{post_id}/reaction/{reaction_id}', json={'type': 'inspiring'})
+    assert 'OK' in rv.status
+    rv = client.get(f'/user/{current_user.username}/posts/{post_id}/reaction/{reaction_id}')
+    assert 'OK' in rv.status
+    reaction_type = json.loads(rv.data)['reaction']['type']
+    assert reaction_type != initial_type
+
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""

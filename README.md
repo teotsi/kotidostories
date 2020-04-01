@@ -32,3 +32,5 @@ like `projects/kotidostories/...`, and you are working on `projects`, then `PIC_
 but otherwise pictures will most likely not be served as intended.
 
 To skip Travis/CI tests, just add `[ci skip]` at the end of your commit message.
+
+You can run tests using `pytest -s --cov=kotidostories`. It will also produce a basic coverage report db.

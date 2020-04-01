@@ -10,23 +10,30 @@ from kotidostories.utils.general_utils import serialize
 reacting_bp = Blueprint('reacting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/reaction')
 
 
+@reacting_bp.route('/<string:reaction_id>')
+def get_reaction(user=None, post_id=None, reaction_id=None):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    reaction = post.reactions.filter_by(id=reaction_id).first_or_404()
+    return jsonify({"reaction": serialize(reaction)})
+
+
 @reacting_bp.route('/', methods=['GET'])
 @auth_required()
 def get_post_reactions(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
-    reactions = post.reactions
-    return jsonify({"reactions": [serialize(reaction) for reaction in reactions]})
+    reactions = post.reactions.all()
+    return jsonify({"reactions": serialize(reactions)})
 
 
 @reacting_bp.route('/', methods=['POST'])
-@auth_required(authorization=True)
+@auth_required()
 def react_to_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
 
     from_author = post.user_id == current_user.id
     data = request.get_json()
     reaction_type = data.get('type')
-    reaction_exists = next((reaction for reaction in post.reactions
+    reaction_exists = next((reaction for reaction in post.reactions.all()
                             if reaction.user_id == current_user.id), None)
 
     if reaction_exists:

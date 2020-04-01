@@ -14,8 +14,7 @@ commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:u
 @commenting_bp.route('/')
 def get_comments(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first()
-    comments = [serialize(comment) for comment in post.comments]
-    return jsonify({'comments': comments})
+    return jsonify({'comments': serialize(post.comments)})
 
 
 @commenting_bp.route('/', methods=['POST'])

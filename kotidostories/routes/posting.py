@@ -16,7 +16,8 @@ def get_posts(user=None):
 
     filter = request.args.get('filter')
     if filter == 'following':
-        posts = [serialize(post) for followee in user.following for post in followee.posts if post.published]
+        posts = [serialize(followee.posts) for followee in user.following]
+        posts = [post for post in posts if post['is_published']]
     else:
         posts = [serialize(post) for post in user.posts if post.published]
     category = request.args.get('category')
