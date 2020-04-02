@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime(), default=datetime.now)
     img = db.Column(db.String(), server_default="pictures/profile/default.png")
-    posts = db.relationship("Post", back_populates="user")
+    posts = db.relationship("Post", back_populates="user", lazy='dynamic')
     comments = db.relationship("Comment", back_populates="user")
     reactions = db.relationship("Reaction", backref="user")
     followers = db.relationship("User",

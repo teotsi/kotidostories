@@ -1,8 +1,7 @@
 import importlib
 import uuid
+from collections import Iterable
 from pathlib import Path, PurePosixPath
-
-from sqlalchemy.orm.collections import InstrumentedList
 
 
 def create_id():
@@ -13,7 +12,7 @@ def serialize(object):
     object_cls = type(object).__name__  # getting object' class nam, e.g User, Post
     class_name = f'{object_cls}Schema'  # appending 'Schema' suffix to create Marshmallow class name
 
-    if isinstance(object, (list, InstrumentedList)):  # lists cannot be dumped automatically
+    if isinstance(object, Iterable):  # lists cannot be dumped automatically
         return [serialize(item) for item in object]  # so we use recursion on each item of said list
 
     cls = getattr(importlib.import_module(f'kotidostories.schemas.{class_name}'),
