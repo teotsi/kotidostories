@@ -9,8 +9,6 @@ from kotidostories.utils.general_utils import serialize
 commenting_bp = Blueprint('commenting_bp', __name__, url_prefix='/user/<string:user>/posts/<string:post_id>/comments/')
 
 
-# TODO
-
 @commenting_bp.route('/')
 def get_comments(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
@@ -52,3 +50,18 @@ def edit_comment(user=None, post_id=None, comment_id=None):
         comment.update(key, value)
         db.session.commit()
     return jsonify({'message': 'Edited comment'})
+
+
+@commenting_bp.route('/<string:comment_id>', methods=['DELETE'])
+@auth_required(authorization=True)  # users shouldn't be able to delete comments that they haven't authored
+def delete_comment(user=None, post_id=None, comment_id=None):
+    user_data = User.query.filter_by(username=user).first_or_404()
+    user_posts = user_data.posts
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    comments = post.comments
+    comment = comments.filter_by(id=comment_id).first_or_404()
+    if comment.user_id == current_user.id:
+        db.session.delete(comment)
+        db.session.commit()
+        return jsonify({'message': 'Post deleted'})
+    return {}, 404

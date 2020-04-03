@@ -154,6 +154,11 @@ def test_comment(app, client):
     comments = json.loads(rv.data)['comments']
     assert comments[0]['content'] != content  # asserting that the change was successful
 
+    rv = client.delete(f'/user/{current_user.username}/posts/{post_id}/comments/{comment_id}')
+    assert 'OK' in rv.status
+    rv = client.get(f'/user/{current_user.username}/posts/{post_id}/comments/')
+    comments = json.loads(rv.data)['comments']
+    assert len(comments) == 0
 
 def test_reaction(app, client):
     @app.login_manager.request_loader
