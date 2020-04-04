@@ -13,8 +13,8 @@ def get_all_posts():
 
 
 @direct_post_bp.route('/<string:id>')
-def get_post():
-    post = Post.query.filter_by(id=id).first_or_404()
+def get_post(id=None):
+    post = Post.query.filter_by(id=id).first()
     return jsonify(serialize(post))
 
 # TODO
