@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime
 
+from slugify import slugify
 from sqlalchemy import ForeignKey
 
 from kotidostories import db
@@ -28,6 +29,7 @@ class Post(db.Model):
     last_edit_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     preview = db.Column(db.String(), nullable=False)
     published = db.Column(db.Boolean(), default=True)
+    slug = db.Column(db.String())
     img = db.Column(db.String(), server_default='pictures/post/default.png')
     comments = db.relationship("Comment", backref="post", lazy='dynamic')
     reactions = db.relationship("Reaction", backref="post", lazy='dynamic')
@@ -37,6 +39,7 @@ class Post(db.Model):
         if 'id' not in kwargs:
             id = create_id()
             kwargs['id'] = id
+        kwargs['slug'] = slugify(kwargs['title'])
         super(Post, self).__init__(**kwargs)
 
     def __repr__(self):

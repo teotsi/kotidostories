@@ -52,6 +52,7 @@ def create_app(test_config=None):
         app.register_blueprint(images_bp)
         app.register_blueprint(discover_bp)
         app.register_blueprint(direct_post_bp)
+
         @app.after_request
         def after_request(response):
             response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
