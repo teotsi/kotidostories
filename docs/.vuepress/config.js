@@ -7,9 +7,12 @@ module.exports = {
             { text: 'Guide', link: '/guide/' },
             { text: 'External', link: 'https://google.com' }
           ],
-        sidebar:[
-            '/',
-            '/guide'
-        ]
-      }
+        sidebar:{
+          '/guide/':[
+            '',
+            'endpoints',
+            'database'
+          ]
+        }
+      },
 }

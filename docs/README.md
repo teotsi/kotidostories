@@ -11,7 +11,5 @@ features:
   details: Page is using Vuepress! Their dev server sucks.
 - title: RESTful
   details: The overall API design is conforms to the REST standard. For now it responds to JSON queries.
-footer: MIT Licensed | Copyright © 2018-present Unfold team
+footer: MIT Licensed
 ---
-
-# Coooool docs man
