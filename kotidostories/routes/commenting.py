@@ -29,6 +29,8 @@ def post_comment(user=None, post_id=None):
     user_data = User.query.filter_by(username=user).first_or_404()
     post = user_data.posts.filter_by(id=post_id).first_or_404()
     content = data.get('content')
+    if not content:
+        return jsonify({'message':'invalid content'})
     user_id = current_user.id
     from_author = user_id == post.user_id
     comment = Comment(user_id=user_id, post_id=post_id, content=content,

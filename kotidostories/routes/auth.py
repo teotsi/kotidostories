@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, current_user, logout_user
+from sqlalchemy.exc import IntegrityError
 
 from kotidostories import bcrypt, db
 from kotidostories.models.user import User, verify_reset_token
@@ -43,9 +44,27 @@ def register():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
+
     if not (email and username and password):  # checking if necessary credentials were provided
         return jsonify({'message': 'Missing credentials'}), 403
-    return auth_utils.register(username, email, password)
+    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    # querying db to search if email already exists
+    email_exists = User.query.filter_by(email=email).first()
+
+    if email_exists:
+        return jsonify({'message': 'Email is taken!'}), 403
+
+    # same for username
+    username_exists = User.query.filter_by(username=username).first()
+    if username_exists:
+        return jsonify({'message': 'Username is taken!'}), 403
+
+    # creating user and adding to database
+    user = User(username=username, email=email, password_hash=password_hash)
+    db.session.add(user)
+    db.session.commit()
+    login_user(user, remember=False)  # logging user in
+    return jsonify({'message': 'New user created!'})
 
 
 @auth_bp.route("/logout/")
@@ -61,11 +80,16 @@ def request_reset_token():
         return jsonify({'message': 'Authenticated'}), 403
     user = verify_reset_token(data.get('token'))
     if user:
-        password = data.get('form')['password']
-        password_hash = bcrypt.generate_password_hash(password)
-        user.password_hash = password_hash
-        db.session.commit()
-        return jsonify({'message': 'Valid token'})
+        try:
+            password = data.get('form')['password']
+            password_hash = bcrypt.generate_password_hash(password)
+            user.password_hash = password_hash
+            db.session.commit()
+            return jsonify({'message': 'Valid token'})
+        except (KeyError, IntegrityError) as e:
+            print(e)
+            db.session.rollback()
+            return {'message':'invalid parameters!'},400
     else:
         return jsonify({'message': 'Invalid token'}), 403
 
