@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -55,7 +55,7 @@ def create_app(test_config=None):
 
         @app.after_request
         def after_request(response):
-            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+            response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
             response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
             response.headers.add('Access-Control-Allow-Credentials', 'true')
