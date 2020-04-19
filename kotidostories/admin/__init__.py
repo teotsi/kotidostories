@@ -1,0 +1,1 @@
+from .modelViews import MyAdminIndexView

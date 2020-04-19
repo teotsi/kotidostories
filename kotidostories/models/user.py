@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
     date = db.Column(db.DateTime(), default=datetime.now)
+    admin = db.Column(db.Boolean(), default=False)
     img = db.Column(db.String(), server_default="pictures/profile/default.png")
     posts = db.relationship("Post", back_populates="user", lazy='dynamic')
     comments = db.relationship("Comment", back_populates="user")
@@ -43,6 +44,11 @@ class User(db.Model, UserMixin):
                                 primaryjoin="User.id==follower.c.follower_id",
                                 secondaryjoin="User.id==follower.c.user_id",
                                 backref="followee")
+
+    def __init__(self, **kwargs):
+        if 'admin' in kwargs:
+            raise OSError
+        super(User, self).__init__(**kwargs)
 
     def get_reset_token(self, expires=1800):
         s = Serializer(secret, expires)
