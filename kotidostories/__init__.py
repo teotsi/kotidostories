@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_admin import Admin
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -34,6 +35,12 @@ def create_app(test_config=None):
         import kotidostories.models
         db.create_all()
         mail.init_app(app)
+        from .models import User, Post, Comment, Follower, Reaction
+        from .admin.modelViews import AdminModelView, MyAdminIndexView
+        admin = Admin(app, 'Example: Auth', index_view=MyAdminIndexView(),base_template='my_master.html')
+        admin.add_views(AdminModelView(User, db.session), AdminModelView(Post, db.session),
+                        AdminModelView(Comment, db.session), AdminModelView(Follower, db.session),
+                        AdminModelView(Reaction, db.session))
 
         @login_manager.user_loader
         def load_user(user_id):

@@ -1,6 +1,6 @@
 import importlib
 import uuid
-from collections import Iterable
+from collections.abc import Iterable
 from pathlib import Path, PurePosixPath
 
 
