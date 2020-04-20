@@ -6,6 +6,7 @@ from kotidostories import db
 from kotidostories.models import User, Post, Comment
 from kotidostories.utils.auth_utils import auth_required, get_request_data
 from kotidostories.utils.general_utils import serialize, save_img
+from kotidostories.utils.post_utils import save_post
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -28,21 +29,7 @@ def get_posts(user=None):
 @posting_bp.route('posts/', methods=['POST'])
 @auth_required(authorization=True)
 def upload_post(user=None):
-    data = get_request_data(request)
-    content = data.get('content')
-    title = data.get('title')
-    preview = data.get('preview')
-    category = data.get('category')
-    try:
-        post = Post(user_id=current_user.id, content=content, title=title, preview=preview, category=category)
-        if 'image' in request.files:
-            save_img(request.files['image'], post, current_user.id, post.id)
-        db.session.add(post)
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({'message':'Invalid parameters!'}),400
-    return jsonify({"post": serialize(post), "message": "Put post successfully!"})
+    return save_post()
 
 
 @posting_bp.route('posts/<string:post_id>', methods=['DELETE'])

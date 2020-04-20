@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
 
 from kotidostories.models import Post
+from kotidostories.utils.auth_utils import auth_required
 from kotidostories.utils.general_utils import serialize
+from kotidostories.utils.post_utils import save_post
 
 direct_post_bp = Blueprint('direct_post_bp', __name__, url_prefix='/post/')
 
@@ -16,6 +18,12 @@ def get_all_posts():
 def get_post(id=None):
     post = Post.query.filter_by(id=id).first()
     return jsonify(serialize(post))
+
+
+@direct_post_bp.route('/', methods=["POST"])
+@auth_required()
+def upload_post():
+    return save_post()
 
 # TODO
 # decide if REST endpoints that do require username/id should be here
