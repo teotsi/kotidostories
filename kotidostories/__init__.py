@@ -53,7 +53,7 @@ def create_app(test_config=None):
 
         # registering blueprints
         from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp, reacting_bp, images_bp, \
-            discover_bp, direct_post_bp
+            discover_bp, direct_post_bp, direct_user_bp
 
         app.register_blueprint(landing_bp)
         app.register_blueprint(auth_bp)
@@ -63,7 +63,7 @@ def create_app(test_config=None):
         app.register_blueprint(images_bp)
         app.register_blueprint(discover_bp)
         app.register_blueprint(direct_post_bp)
-
+        app.register_blueprint(direct_user_bp)
         @app.after_request
         def after_request(response):
             response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))

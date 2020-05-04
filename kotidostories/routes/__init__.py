@@ -6,3 +6,4 @@ from .reacting import reacting_bp
 from .images import images_bp
 from .discover import discover_bp
 from .direct_post import direct_post_bp
+from .direct_user import direct_user_bp
