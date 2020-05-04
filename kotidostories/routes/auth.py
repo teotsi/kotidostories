@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_user, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
-from kotidostories import bcrypt, db
+from kotidostories import bcrypt, db, q
 from kotidostories.models.user import User, verify_reset_token
 from kotidostories.schemas.PostSchema import PostSchema
 from kotidostories.utils.auth_utils import auth_utils

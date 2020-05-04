@@ -65,5 +65,8 @@ def register(username, email, password, login=True):
 def get_request_data(request):
     data = request.get_json()
     if not data:
-        return json.loads(request.form.getlist('data')[0])
+        try:
+            return json.loads(request.form.getlist('data')[0])
+        except IndexError:
+            return {}
     return data

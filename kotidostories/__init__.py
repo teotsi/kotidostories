@@ -5,6 +5,8 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from redis import Redis
+from rq import Queue
 
 from .utils.general_utils import create_pictures_directory
 
@@ -14,6 +16,8 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 secret = 'I know all about security'
 mail = Mail()
+r = Redis()
+q = Queue(connection=r)
 
 
 def create_app(test_config=None):
@@ -37,7 +41,7 @@ def create_app(test_config=None):
         mail.init_app(app)
         from .models import User, Post, Comment, Follower, Reaction
         from .admin.modelViews import AdminModelView, MyAdminIndexView
-        admin = Admin(app, 'Example: Auth', index_view=MyAdminIndexView(),base_template='my_master.html')
+        admin = Admin(app, 'Example: Auth', index_view=MyAdminIndexView(), base_template='my_master.html')
         admin.add_views(AdminModelView(User, db.session), AdminModelView(Post, db.session),
                         AdminModelView(Comment, db.session), AdminModelView(Follower, db.session),
                         AdminModelView(Reaction, db.session))
