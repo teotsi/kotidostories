@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from flask_login import current_user
 
 from kotidostories.models import Post
 from kotidostories.utils.auth_utils import auth_required
@@ -18,7 +19,14 @@ def get_all_posts():
 @direct_post_bp.route('/<string:id>/')
 def get_post(id=None):
     post = Post.query.filter_by(id=id).first()
-    return jsonify(serialize(post))
+    serialized_post = serialize(post)
+    if current_user.is_authenticated:
+        reactions = current_user.reactions
+        reaction = next((reaction for reaction in reactions if reaction.user_id == current_user.id), None)
+        if reaction:
+            serialized_post['reacted'] = reaction.type
+            serialized_post['reacted_id'] = reaction.id
+    return jsonify(serialized_post)
 
 
 @direct_post_bp.route('/', methods=["POST"])
