@@ -31,6 +31,20 @@ def save_post():
     return jsonify({"post": serialize(post), "message": "Put post successfully!"})
 
 
+def refresh_post(id=None):
+    post = Post.query.filter_by(id=id).first_or_404()
+    if post.user_id == current_user.id:
+        data = get_request_data(request)
+        if 'image' in request.files:
+            save_img(request.files['image'], post, current_user.id, id)
+        for key, value in data.items():
+            post.update(key, value)
+        db.session.commit()
+        return jsonify({"message": 'Updated post!'})
+    else:
+        return jsonify({"message": 'unathorized!'}), 403
+
+
 def react(id=None):
     post = Post.query.filter_by(id=id).first_or_404()
 

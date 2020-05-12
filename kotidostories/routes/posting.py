@@ -6,7 +6,7 @@ from kotidostories import db
 from kotidostories.models import User, Post, Comment
 from kotidostories.utils.auth_utils import auth_required, get_request_data
 from kotidostories.utils.general_utils import serialize, save_img
-from kotidostories.utils.post_utils import save_post
+from kotidostories.utils.post_utils import save_post, refresh_post
 
 posting_bp = Blueprint('posting_bp', __name__, url_prefix='/user/<string:user>/')
 
@@ -44,14 +44,7 @@ def delete_post(user=None, post_id=None):
 @posting_bp.route('posts/<string:post_id>', methods=['PATCH'])
 @auth_required(authorization=True)
 def update_post(user=None, post_id=None):
-    post = Post.query.filter_by(id=post_id).first_or_404()
-    data = get_request_data(request)
-    if 'image' in request.files:
-        save_img(request.files['image'], post, current_user.id, post_id)
-    for key, value in data.items():
-        post.update(key, value)
-    db.session.commit()
-    return jsonify({"message": 'Updated post!'})
+    return refresh_post(post_id)
 
 
 @posting_bp.route('/')

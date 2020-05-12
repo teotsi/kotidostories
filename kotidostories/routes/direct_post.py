@@ -4,7 +4,7 @@ from kotidostories.models import Post
 from kotidostories.utils.auth_utils import auth_required
 from kotidostories.utils.general_utils import serialize
 from kotidostories.utils.post_utils import save_post, react
-from kotidostories.utils.post_utils.post_utils import delete_react
+from kotidostories.utils.post_utils.post_utils import delete_react, refresh_post
 
 direct_post_bp = Blueprint('direct_post_bp', __name__, url_prefix='/post/')
 
@@ -25,6 +25,12 @@ def get_post(id=None):
 @auth_required()
 def upload_post():
     return save_post()
+
+
+@direct_post_bp.route('/<string:id>/', methods=["PUT"])
+@auth_required()
+def edit_post(id=None):
+    return refresh_post(id)
 
 
 # TODO
