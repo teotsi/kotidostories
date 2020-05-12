@@ -22,7 +22,9 @@ def get_post(id=None):
     serialized_post = serialize(post)
     if current_user.is_authenticated:
         reactions = current_user.reactions
-        reaction = next((reaction for reaction in reactions if reaction.user_id == current_user.id), None)
+        reaction = next(
+            (reaction for reaction in reactions if reaction.user_id == current_user.id and reaction.post_id == id),
+            None)
         if reaction:
             serialized_post['reacted'] = reaction.type
             serialized_post['reacted_id'] = reaction.id
