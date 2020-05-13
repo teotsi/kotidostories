@@ -16,7 +16,7 @@ class Type(str, enum.Enum):
 
 class Reaction(db.Model):
     id = db.Column(db.String(), primary_key=True, default=create_id)
-    user_id = db.Column(db.String(), ForeignKey('user.id'), nullable=False, unique=True)
+    user_id = db.Column(db.String(), ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.String(), ForeignKey('post.id'), nullable=False)
     type = db.Column(db.Enum(Type), nullable=False)
     date = db.Column(db.DateTime, default=datetime.now)

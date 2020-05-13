@@ -8,7 +8,7 @@ class Config(object):
     TESTING = os.environ.get('TESTING')
     SECRET_KEY = os.environ.get('SECRET_KEY', default='So safe')
     ENV = os.environ.get('ENV', default='development')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite?check_same_thread=False'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     MAIL_SERVER = 'smtp.gmail.com'
