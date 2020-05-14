@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from kotidostories import db
 from kotidostories.models import Post, Reaction
 from kotidostories.utils.auth_utils import get_request_data
+from kotidostories.utils.es_utils.es_utils import index_post
 from kotidostories.utils.general_utils import save_img, serialize
 
 
@@ -25,6 +26,7 @@ def save_post():
             save_img(request.files['image'], post, current_user.id, post.id)
         db.session.add(post)
         db.session.commit()
+        index_post(post)
     except IntegrityError:
         db.session.rollback()
         return jsonify({'message': 'Invalid parameters!'}), 400
