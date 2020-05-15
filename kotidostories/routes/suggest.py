@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from kotidostories.utils.es_utils.es_utils import get_suggestion
+from kotidostories.utils.es_utils import get_suggestion
 
 suggest_bp = Blueprint('suggest_bp', __name__)
 

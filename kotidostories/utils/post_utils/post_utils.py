@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from kotidostories import db
 from kotidostories.models import Post, Reaction
 from kotidostories.utils.auth_utils import get_request_data
-from kotidostories.utils.es_utils.es_utils import index_post
+from kotidostories.utils.es_utils import index_post, update_index
 from kotidostories.utils.general_utils import save_img, serialize
 
 
@@ -42,9 +42,10 @@ def refresh_post(id=None):
         for key, value in data.items():
             post.update(key, value)
         db.session.commit()
+        update_index(post)
         return jsonify({"message": 'Updated post!'})
     else:
-        return jsonify({"message": 'unathorized!'}), 403
+        return jsonify({"message": 'unauthorized!'}), 403
 
 
 def react(id=None):
