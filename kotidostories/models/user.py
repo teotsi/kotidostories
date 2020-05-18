@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.String(128), primary_key=True, default=create_id)
     username = db.Column(db.String(), unique=True, nullable=False)
     first_name = db.Column(db.String())
+    description = db.Column(db.String(), server_default="")
     last_name = db.Column(db.String())
     email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
