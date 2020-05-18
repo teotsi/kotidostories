@@ -64,9 +64,7 @@ def get_suggestion(text=None, size=None, id=None):
         text = post.content
     query = get_more_like_this_query(text, size)
     results = es.search(index="kot_front", body=query)
-    print(results['hits']['hits'])
     posts = [Post.query.filter_by(id=result["_id"]).first() for result in results['hits']['hits']]
-    print(posts)
     posts = [post for post in posts if post is not None]
     return jsonify(serialize(posts))
 

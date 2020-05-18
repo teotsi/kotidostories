@@ -15,7 +15,7 @@ def get_comments(user=None, post_id=None):
     return jsonify({'comments': serialize(post.comments.all())})
 
 
-@commenting_bp.route('/<string:comment_id>')
+@commenting_bp.route('/<string:comment_id>/')
 def get_comment(post_id=None, comment_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
     comment = post.comments.filter_by(id=comment_id).first_or_404()
@@ -40,7 +40,7 @@ def post_comment(user=None, post_id=None):
     return jsonify({'comment': serialize(comment)})
 
 
-@commenting_bp.route('/<string:comment_id>', methods=['PATCH'])
+@commenting_bp.route('/<string:comment_id>/', methods=['PATCH'])
 @auth_required()
 def edit_comment(user=None, post_id=None, comment_id=None):
     data = get_request_data(request)
@@ -54,7 +54,7 @@ def edit_comment(user=None, post_id=None, comment_id=None):
     return jsonify({'message': 'Edited comment'})
 
 
-@commenting_bp.route('/<string:comment_id>', methods=['DELETE'])
+@commenting_bp.route('/<string:comment_id>/', methods=['DELETE'])
 @auth_required(authorization=True)  # users shouldn't be able to delete comments that they haven't authored
 def delete_comment(user=None, post_id=None, comment_id=None):
     user_data = User.query.filter_by(username=user).first_or_404()

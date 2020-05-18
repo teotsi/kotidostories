@@ -72,7 +72,7 @@ def create_app(test_config=None):
         def after_request(response):
             response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
             response.headers.add('Access-Control-Allow-Credentials', 'true')
             return response
     return app
