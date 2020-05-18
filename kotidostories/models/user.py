@@ -35,6 +35,7 @@ class User(db.Model, UserMixin):
     posts = db.relationship("Post", back_populates="user", lazy='dynamic')
     comments = db.relationship("Comment", back_populates="user")
     reactions = db.relationship("Reaction", backref="user")
+    transactions = db.relationship("Transaction", backref="user")
     followers = db.relationship("User",
                                 secondary="follower",
                                 primaryjoin="User.id==follower.c.user_id",

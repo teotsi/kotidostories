@@ -16,3 +16,4 @@ class UserSchema(SQLAlchemyAutoSchema):
     posts = Nested('PostSchema', many=True)
     comments = Nested('CommentSchema', many=True, exclude=['user'])
     reactions = Nested('ReactionSchema', many=True, exclude=['user'])
+    transactions = Nested('TransactionSchema', many=True, exclude=['user', 'company_amount'])
