@@ -32,7 +32,7 @@ def upload_post(user=None):
     return save_post()
 
 
-@posting_bp.route('posts/<string:post_id>', methods=['DELETE'])
+@posting_bp.route('posts/<string:post_id>/', methods=['DELETE'])
 @auth_required(authorization=True)  # users shouldn't be able to delete posts that they haven't authored
 def delete_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
