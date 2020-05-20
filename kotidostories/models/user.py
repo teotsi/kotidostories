@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
     def update(self, key, value):
-        valid_columns = ['img', 'first_name', 'last_name', 'username']
+        valid_columns = ['img', 'first_name', 'last_name', 'username', 'description']
         if key in valid_columns and getattr(self, key) != value:
             return setattr(self, key, value)
 

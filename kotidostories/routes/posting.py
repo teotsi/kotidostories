@@ -62,6 +62,7 @@ def get_user(user=None):
 @auth_required(authorization=True)
 def update_user(user=None):
     user = current_user
+    print(user)
     data = get_request_data(request)
     if 'image' in request.files:
         save_img(request.files['image'], user, user.id)
