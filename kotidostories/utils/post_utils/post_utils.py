@@ -15,12 +15,14 @@ def save_post():
     title = data.get('title')
     preview = data.get('preview')
     category = data.get('category')
+    featured = data.get('featured')
     try:
         published = data.get('published')
     except KeyError:
         published = True
     try:
         post = Post(user_id=current_user.id, content=content, title=title, preview=preview, category=category,
+                    featured=featured,
                     published=published)
         if 'image' in request.files:
             save_img(request.files['image'], post, current_user.id, post.id)

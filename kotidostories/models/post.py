@@ -30,6 +30,7 @@ class Post(db.Model):
     preview = db.Column(db.String(), nullable=False)
     published = db.Column(db.Boolean(), default=True)
     slug = db.Column(db.String())
+    featured = db.Column(db.Boolean(), default=False)
     img = db.Column(db.String(), server_default='pictures/post/default.png')
     comments = db.relationship("Comment", backref="post", lazy='dynamic')
     reactions = db.relationship("Reaction", backref="post", lazy='dynamic')
@@ -46,6 +47,6 @@ class Post(db.Model):
         return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'
 
     def update(self, key, value):
-        valid_columns = ['content', 'title', 'date', 'preview', 'category']
+        valid_columns = ['content', 'title', 'date', 'preview', 'category', 'featured']
         if key in valid_columns and getattr(self, key) != value:
             return setattr(self, key, value)
