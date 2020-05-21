@@ -75,7 +75,11 @@ def create_app(test_config=None, production=None):
 
         @app.after_request
         def after_request(response):
-            response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
+            if app.config['ENV'] == 'production':
+                response.headers.add('Access-Control-Allow-Origin',
+                                     'http://ec2-34-201-242-135.compute-1.amazonaws.com:3000/')
+            else:
+                response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
             response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
             response.headers.add('Access-Control-Allow-Credentials', 'true')
