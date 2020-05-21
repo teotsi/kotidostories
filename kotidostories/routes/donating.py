@@ -18,7 +18,7 @@ def get_donations(user=None):
 
 
 @donating_bp.route('/', methods=['POST'])
-@auth_required(authorization=True)
+@auth_required()
 def make_donation(user=None):
     data = get_request_data(request)
     amount = data.get('amount')
