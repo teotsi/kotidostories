@@ -19,6 +19,13 @@ class Config(object):
     MAIL_USE_SSL = False
 
 
+class ProductionConfig(Config):
+    DEBUG = False
+    TESTING = False
+    ENV = 'production'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+
 class TestConfig(Config):
     ENV = os.environ.get('ENV', default='development')
     TESTING = True

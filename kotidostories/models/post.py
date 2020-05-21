@@ -44,7 +44,7 @@ class Post(db.Model):
         super(Post, self).__init__(**kwargs)
 
     def __repr__(self):
-        return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}'
+        return f'{self.id}, {self.user_id}, {self.content}, {self.title}, {self.date}, {self.featured}'
 
     def update(self, key, value):
         valid_columns = ['content', 'title', 'date', 'preview', 'category', 'featured']

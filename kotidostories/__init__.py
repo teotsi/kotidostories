@@ -22,13 +22,17 @@ q = Queue(connection=r)
 es = Elasticsearch(hosts=[{'host': 'ec2-34-201-242-135.compute-1.amazonaws.com', 'port': 9200}])
 
 
-def create_app(test_config=None):
+def create_app(test_config=None, production=None):
     app = Flask(__name__)
     if test_config:
         app.config.from_mapping(test_config)
     else:
-        # loading config.py
-        app.config.from_object('kotidostories.config.Config')
+        if production:
+            app.config.from_object('kotidostories.config.ProductionConfig')
+
+        else:
+            # loading config.py
+            app.config.from_object('kotidostories.config.Config')
     # checking if pictures directory exists
     create_pictures_directory()
     # initializing db
