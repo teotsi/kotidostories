@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 from flask import Flask, request
 from flask_admin import Admin
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_mail import Mail
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -60,7 +60,6 @@ def create_app(test_config=None, production=None):
         # registering blueprints
         from kotidostories.routes import landing_bp, auth_bp, posting_bp, commenting_bp, reacting_bp, images_bp, \
             discover_bp, direct_post_bp, direct_user_bp, suggest_bp, donating_bp
-
         app.register_blueprint(landing_bp)
         app.register_blueprint(auth_bp)
         app.register_blueprint(posting_bp)
