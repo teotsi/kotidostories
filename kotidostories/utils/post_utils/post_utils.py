@@ -28,9 +28,7 @@ def save_post():
             save_img(request.files['image'], post, current_user.id, post.id)
         db.session.add(post)
         db.session.commit()
-        if request.environ.get('HTTP_ORIGIN'):
-            if 'localhost' not in request.environ.get('HTTP_ORIGIN'):
-                index_post(post)
+        index_post(post)
     except IntegrityError:
         db.session.rollback()
         return jsonify({'message': 'Invalid parameters!'}), 400
@@ -46,9 +44,7 @@ def refresh_post(id=None):
         for key, value in data.items():
             post.update(key, value)
         db.session.commit()
-        if request.environ.get('HTTP_ORIGIN'):
-            if 'localhost' not in request.environ.get('HTTP_ORIGIN'):
-                update_index(post)
+        update_index(post)
         return jsonify({"message": 'Updated post!'})
     else:
         return jsonify({"message": 'unauthorized!'}), 403
