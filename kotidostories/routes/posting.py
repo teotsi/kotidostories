@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
-from sqlalchemy.exc import IntegrityError
 
 from kotidostories import db
 from kotidostories.models import User, Post, Comment
 from kotidostories.utils.auth_utils import auth_required, get_request_data
+from kotidostories.utils.es_utils import delete_post_from_index
 from kotidostories.utils.general_utils import serialize, save_img
 from kotidostories.utils.post_utils import save_post, refresh_post
 
@@ -16,7 +16,8 @@ def get_posts(user=None):
     user = User.query.filter_by(username=user).first_or_404()
     filter = request.args.get('filter')
     if filter == 'following':
-        posts = [serialize(post) for followee in user.following for post in followee.posts.all() if followee.posts.all()]
+        posts = [serialize(post) for followee in user.following for post in followee.posts.all() if
+                 followee.posts.all()]
         posts = [post for post in posts if post['published']]
     else:
         posts = [serialize(post) for post in user.posts.all() if post.published]
@@ -38,6 +39,7 @@ def delete_post(user=None, post_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
     db.session.delete(post)
     db.session.commit()
+    delete_post_from_index(post_id)
     return jsonify({'message': 'Post deleted'})
 
 

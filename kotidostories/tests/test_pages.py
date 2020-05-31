@@ -6,6 +6,7 @@ from flask_login import current_user
 
 from kotidostories import create_app
 from kotidostories.models import User
+from kotidostories.utils.es_utils import delete_post_from_index
 
 
 @pytest.fixture
@@ -160,6 +161,7 @@ def test_comment(app, client):
     comments = json.loads(rv.data)['comments']
     assert len(comments) == 0
 
+
 def test_reaction(app, client):
     @app.login_manager.request_loader
     def load_user_from_request(request):
@@ -190,6 +192,12 @@ def test_reaction(app, client):
     assert 'OK' in rv.status
     reaction_type = json.loads(rv.data)['reaction']['type']
     assert reaction_type != initial_type
+
+    # delete posts from es
+    rv = client.get('user/testidis/posts/')
+    posts = json.loads(rv.data)['posts']
+    for post in posts:
+        delete_post_from_index(post["id"])
 
 
 @pytest.fixture(scope="session", autouse=True)

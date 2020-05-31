@@ -10,4 +10,4 @@ class CommentSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         model = Comment
 
-    user = Nested("UserSchema", only=['username'])
+    user = Nested("UserSchema", only=['username', 'img'])

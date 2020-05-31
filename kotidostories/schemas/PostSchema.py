@@ -12,4 +12,4 @@ class PostSchema(SQLAlchemyAutoSchema):
 
     comments = Nested('CommentSchema', many=True, exclude=['post'])
     reactions = Nested('ReactionSchema', many=True, exclude=['post'])
-    user = Nested("UserSchema", only=['username'])
+    user = Nested("UserSchema", only=['username', 'img'])

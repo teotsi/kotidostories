@@ -64,6 +64,7 @@ def get_suggestion(text=None, size=None, id=None):
         text = post.content
     query = get_more_like_this_query(text, size)
     results = es.search(index="kot_front", body=query)
+    print(results)
     posts = [Post.query.filter_by(id=result["_id"]).first() for result in results['hits']['hits']]
     posts = [post for post in posts if post is not None]
     return jsonify(serialize(posts))
@@ -77,3 +78,7 @@ def update_index(post):
         }
     }
     es.update(index="kot_front", id=post.id, body=body)
+
+
+def delete_post_from_index(id):
+    es.delete(index='kot_front', id=id, doc_type='_doc')
