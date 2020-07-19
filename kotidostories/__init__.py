@@ -8,7 +8,7 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from redis import Redis
 from rq import Queue
-
+import os
 from .utils.general_utils import create_pictures_directory
 
 db = SQLAlchemy()
@@ -19,7 +19,7 @@ secret = 'I know all about security'
 mail = Mail()
 r = Redis()
 q = Queue(connection=r)
-es = Elasticsearch(hosts=[{'host': 'ec2-34-201-242-135.compute-1.amazonaws.com', 'port': 9200}])
+es = Elasticsearch(hosts=[{'host': os.environ.get('ES_HOST', default='localhost'), 'port': 9200}])
 
 
 def create_app(test_config=None, production=None):

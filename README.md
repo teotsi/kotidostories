@@ -19,7 +19,7 @@ Implemented features:
  
 ### Setting up dev environment
 
-Simply create a new virtual enviroment (Python 3.6-3.7) and then run the following commands:
+Simply create a new virtual enviroment (Python 3.6+) and then run the following commands:
 
 ```pip install -U pip
 pip install -Ur requirements.txt
@@ -32,6 +32,10 @@ To enable password reset via email, set Environment Variables `EMAIL_FOR_FLASK` 
 Also, you wil need to set `PIC_FLASK` to the project subfolder in your current working directory. For example, if your file tree looks something
 like `projects/kotidostories/...`, and you are working on `projects`, then `PIC_FLASK` should be set to `kotidostories`. It is not necessary,
 but otherwise pictures will most likely not be served as intended.
+
+
+There are endpoints like `suggest/` that make use of an Elasticsearch cluster. To take advantage of this feature, you will need to set another environment variable called `ES_HOST`. Otherwise the host will be `localhost`.
+
 
 To skip Travis/CI tests, just add `[ci skip]` at the end of your commit message.
 
