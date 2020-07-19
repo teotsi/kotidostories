@@ -40,3 +40,5 @@ There are endpoints like `suggest/` that make use of an Elasticsearch cluster. T
 To skip Travis/CI tests, just add `[ci skip]` at the end of your commit message.
 
 You can run tests using `pytest -s --cov=kotidostories`. It will also produce a basic coverage report db.
+
+There is a test database to check the app. You can remove it by deleting it. When you start the app an empty database will be created automatically.
