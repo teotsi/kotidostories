@@ -17,6 +17,9 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('EMAIL_FOR_FLASK')
     MAIL_PASSWORD = os.environ.get('EMAIL_PASS')
     MAIL_USE_SSL = False
+    # SESSION_COOKIE_SECURE = True,
+    SESSION_COOKIE_HTTPONLY = True,
+    SESSION_COOKIE_SAMESITE = 'Strict'
 
 
 class ProductionConfig(Config):

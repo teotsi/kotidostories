@@ -55,6 +55,7 @@ def get_user(user=None):
         if current_user.is_authenticated:
             return jsonify({'user': serialize(current_user._get_current_object())})
         else:
+            print(current_user.is_authenticated)
             return jsonify({'message': 'You need to be logged in'}), 403
     user_info = User.query.filter_by(username=user).first_or_404()
     return jsonify({"user": serialize(user_info)})
