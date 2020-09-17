@@ -15,11 +15,11 @@ def app():
     #     os.remove('kotidostories/.testdb.sqlite')
     # except OSError:
     #     pass
-    app = create_app({'DEBUG': True,
-                      'SECRET_KEY': 'test key',
-                      'ENV': 'development',
-                      'SQLALCHEMY_DATABASE_URI': 'sqlite:///.testdb.sqlite?check_same_thread=False',
-                      'SQLALCHEMY_TRACK_MODIFICATIONS': False})
+    app = create_app(test_config={'DEBUG': True,
+                                  'SECRET_KEY': 'test key',
+                                  'ENV': 'development',
+                                  'SQLALCHEMY_DATABASE_URI': 'sqlite:///.testdb.sqlite?check_same_thread=False',
+                                  'SQLALCHEMY_TRACK_MODIFICATIONS': False})
 
     yield app
 
@@ -94,7 +94,8 @@ def test_update_post(app, client):
 
     initial_user = get_user(client)
     post = initial_user['posts'][0]
-    rv = client.patch(f'user/testidis/posts/{post["id"]}', json={"content": "just a funny edit!"})
+    rv = client.patch(
+        f'user/testidis/posts/{post["id"]}', json={"content": "just a funny edit!"})
     assert 'OK' in rv.status
     user = get_user(client)
     edit_post = user['posts'][0]
@@ -144,7 +145,8 @@ def test_comment(app, client):
     rv = client.get(f'/user/{current_user.username}/posts/{post_id}/comments/')
     comments = json.loads(rv.data)['comments']
     assert len(comments) == 1  # asserting that the comment was actually posted
-    assert comments[0]['content'] == content  # asserting that the content is posted correctly
+    # asserting that the content is posted correctly
+    assert comments[0]['content'] == content
 
     comment_id = comments[0]['id']
     rv = client.patch(f'/user/{current_user.username}/posts/{post_id}/comments/{comment_id}/',
@@ -153,9 +155,11 @@ def test_comment(app, client):
 
     rv = client.get(f'/user/{current_user.username}/posts/{post_id}/comments/')
     comments = json.loads(rv.data)['comments']
-    assert comments[0]['content'] != content  # asserting that the change was successful
+    # asserting that the change was successful
+    assert comments[0]['content'] != content
 
-    rv = client.delete(f'/user/{current_user.username}/posts/{post_id}/comments/{comment_id}/')
+    rv = client.delete(
+        f'/user/{current_user.username}/posts/{post_id}/comments/{comment_id}/')
     assert 'OK' in rv.status
     rv = client.get(f'/user/{current_user.username}/posts/{post_id}/comments/')
     comments = json.loads(rv.data)['comments']
@@ -177,7 +181,8 @@ def test_reaction(app, client):
     assert len(reactions) == 0
     assert 'OK' in rv.status
 
-    rv = client.post(f'/user/{username}/posts/{post_id}/reaction/', json={'type': 'love'})
+    rv = client.post(
+        f'/user/{username}/posts/{post_id}/reaction/', json={'type': 'love'})
     assert 'OK' in rv.status  # asserting successful reaction POST
     rv = client.get(f'/user/{current_user.username}/posts/{post_id}/reaction/')
     reactions = json.loads(rv.data)['reactions']
@@ -186,9 +191,11 @@ def test_reaction(app, client):
 
     reaction_id = reactions[0]['id']
 
-    rv = client.put(f'/user/{username}/posts/{post_id}/reaction/{reaction_id}', json={'type': 'inspiring'})
+    rv = client.put(
+        f'/user/{username}/posts/{post_id}/reaction/{reaction_id}', json={'type': 'inspiring'})
     assert 'OK' in rv.status
-    rv = client.get(f'/user/{current_user.username}/posts/{post_id}/reaction/{reaction_id}')
+    rv = client.get(
+        f'/user/{current_user.username}/posts/{post_id}/reaction/{reaction_id}')
     assert 'OK' in rv.status
     reaction_type = json.loads(rv.data)['reaction']['type']
     assert reaction_type != initial_type

@@ -8,7 +8,7 @@ class Config(object):
     TESTING = os.environ.get('TESTING')
     SECRET_KEY = os.environ.get('SECRET_KEY', default='So safe')
     ENV = os.environ.get('ENV', default='development')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite?check_same_thread=False'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://dev:dev123@127.0.0.1:5432/dev_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     MAIL_SERVER = 'smtp.gmail.com'
@@ -33,3 +33,8 @@ class TestConfig(Config):
     ENV = os.environ.get('ENV', default='development')
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+
+
+class DockerConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql://dev:dev123@127.0.0.1:5432/dev_db'
+    ENV = 'docker'
