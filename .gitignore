@@ -4,6 +4,6 @@
 /venv/
 /dev-env/
 pictures/**/*
-/__pycache__/**/*
+__pycache__/**/*
 !pictures/profile/default.png
 !pictures/post/default.png
