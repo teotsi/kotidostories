@@ -20,7 +20,7 @@ setuptools.setup(
         "Operating System :: Windows",
         "Operating System :: POSIX :: Linux",
     ],
-    install_requires=['Flask==1.1.1',
+    install_requires=['Flask==1.1.2',
                       'Flask-SQLAlchemy==2.4.1',
                       ],
     include_package_data=True,

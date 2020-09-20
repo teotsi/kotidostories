@@ -19,20 +19,19 @@ secret = 'I know all about security'
 mail = Mail()
 r = Redis()
 q = Queue(connection=r)
-es = Elasticsearch(hosts=[{'host': os.environ.get('ES_HOST', default='localhost'), 'port': 9200}])
+es = Elasticsearch(hosts=[{'host': os.environ.get(
+    'ES_HOST', default='localhost'), 'port': 9200}])
 
 
-def create_app(test_config=None, production=None):
+def create_app(test_config=None, environment=None):
     app = Flask(__name__)
-    if test_config:
+    if environment:
+        app.config.from_object(
+            f'kotidostories.config.{environment.capitalize()}Config')
+    elif test_config:
         app.config.from_mapping(test_config)
     else:
-        if production:
-            app.config.from_object('kotidostories.config.ProductionConfig')
-
-        else:
-            # loading config.py
-            app.config.from_object('kotidostories.config.Config')
+        app.config.from_object('kotidostories.config.Config')
     # checking if pictures directory exists
     create_pictures_directory()
     # initializing db
@@ -47,9 +46,11 @@ def create_app(test_config=None, production=None):
         mail.init_app(app)
         from .models import User, Post, Comment, Follower, Reaction
         from .admin.modelViews import AdminModelView, MyAdminIndexView
-        admin = Admin(app, 'Example: Auth', index_view=MyAdminIndexView(), base_template='my_master.html')
+        admin = Admin(app, 'Example: Auth', index_view=MyAdminIndexView(
+        ), base_template='my_master.html')
         admin.add_views(AdminModelView(User, db.session), AdminModelView(Post, db.session),
-                        AdminModelView(Comment, db.session), AdminModelView(Follower, db.session),
+                        AdminModelView(Comment, db.session), AdminModelView(
+                            Follower, db.session),
                         AdminModelView(Reaction, db.session))
 
         @login_manager.user_loader
@@ -78,9 +79,12 @@ def create_app(test_config=None, production=None):
                 response.headers.add('Access-Control-Allow-Origin',
                                      'http://ec2-34-201-242-135.compute-1.amazonaws.com:3000/')
             else:
-                response.headers.add('Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+                response.headers.add(
+                    'Access-Control-Allow-Origin', request.environ.get('HTTP_ORIGIN', 'localhost'))
+            response.headers.add(
+                'Access-Control-Allow-Headers', 'Content-Type,Authorization')
+            response.headers.add(
+                'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
             response.headers.add('Access-Control-Allow-Credentials', 'true')
             return response
     return app
