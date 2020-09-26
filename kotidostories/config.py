@@ -8,7 +8,7 @@ class Config(object):
     TESTING = os.environ.get('TESTING')
     SECRET_KEY = os.environ.get('SECRET_KEY', default='So safe')
     ENV = os.environ.get('ENV', default='development')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://dev:dev123@127.0.0.1:5432/dev_db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite?check_same_thread=false'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     MAIL_SERVER = 'smtp.gmail.com'
@@ -18,7 +18,7 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('EMAIL_PASS')
     MAIL_USE_SSL = False
     # SESSION_COOKIE_SECURE = True,
-    SESSION_COOKIE_HTTPONLY = True,
+    # SESSION_COOKIE_HTTPONLY = False,
     SESSION_COOKIE_SAMESITE = 'Strict'
 
 

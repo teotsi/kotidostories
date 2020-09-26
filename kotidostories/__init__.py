@@ -1,3 +1,4 @@
+import jwt
 from elasticsearch import Elasticsearch
 from flask import Flask, request
 from flask_admin import Admin
@@ -37,6 +38,7 @@ def create_app(test_config=None, environment=None):
     # initializing db
     db.init_app(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
+    app.config['SESSION_COOKIE_HTTPONLY'] = False
     # configuring authentication manager
     login_manager.login_view = 'auth.log_in'
     login_manager.init_app(app)
@@ -72,6 +74,23 @@ def create_app(test_config=None, environment=None):
         app.register_blueprint(direct_user_bp)
         app.register_blueprint(suggest_bp)
         app.register_blueprint(donating_bp)
+
+        @login_manager.request_loader
+        def load_user_from_request(request):
+            auth_headers = request.headers.get('Authorization', '').split()
+            if len(auth_headers) != 2:
+                return None
+            try:
+                token = auth_headers[1]
+                data = jwt.decode(token, app.config['SECRET_KEY'])
+                user = User.query.filter_by(email=data['sub']).first()
+                if user:
+                    return user
+            except jwt.ExpiredSignatureError:
+                return None
+            except (jwt.InvalidTokenError, Exception) as e:
+                return None
+            return None
 
         @app.after_request
         def after_request(response):

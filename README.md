@@ -8,7 +8,7 @@ Flask-based online stories REST (for the most part) API. Work in progress. Backe
 
 Designed to communicate with a Nuxt.js frontend but it should work with any framework that supports HTTP-only cookies.
 Implemented features:
- * User Authentication using HTTP-Only Cookie. This allows users to register, login, logout, and perform tasks that require authentication(such as posting stories and interacting with others.)
+ * User Authentication using JWT. This allows users to register, login, logout, and perform tasks that require authentication(such as posting stories and interacting with others.)
  * Get post,Upload post, edit post, delete post. Also apply query parameters to filter posts
  * Get user, register user, update user 
  * Comment on post, edit comment, delete comment

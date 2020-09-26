@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+import jwt
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
@@ -24,12 +27,19 @@ def log_in():
     password = data['password']
     remember_me = data['remember_me']
     user = User.query.filter_by(email=email).first()  # checking if user exists
-    print(bcrypt.generate_password_hash(password).decode('utf-8')
-          )
+    print(bcrypt.generate_password_hash(password).decode('utf-8'))
     if user and bcrypt.check_password_hash(user.password_hash, password):
+        token = jwt.encode({
+            'sub': user.email,
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)},
+            'So safe')
+
         login_user(user, remember=bool(remember_me))
         posts = [serialize(post) for post in user.posts]
+
         return jsonify({'posts': posts,
+                        'token': token.decode('UTF-8'),
                         'user': 'test'}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
@@ -89,7 +99,7 @@ def request_reset_token():
         except (KeyError, IntegrityError) as e:
             print(e)
             db.session.rollback()
-            return {'message':'invalid parameters!'},400
+            return {'message': 'invalid parameters!'}, 400
     else:
         return jsonify({'message': 'Invalid token'}), 403
 
@@ -126,4 +136,3 @@ def check_username(username=None):
         return jsonify({"message": "username is available!"})
     else:
         return jsonify({"message": "Username is unavailable"}), 401
-
