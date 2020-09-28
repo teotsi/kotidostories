@@ -1,8 +1,9 @@
 # used for routes that require the user to be logged in
-import datetime
+from datetime import datetime, timedelta
 import json
 from functools import wraps
 
+import jwt
 from flask import jsonify
 from flask_login import current_user, login_user
 from flask_mail import Message
@@ -35,13 +36,13 @@ def send_reset_email(user, frontend='http://localhost:3000/reset?'):
                   recipients=[user.email])
     msg.body = f'''To reset your password, visit the following link:
 {frontend}token={token}
-This token is going to be active until {datetime.datetime.now() + datetime.timedelta(minutes=30)}
+This token is going to be active until {datetime.now() + timedelta(minutes=30)}
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
     mail.send(msg)
 
 
-def register(username, email, password, login=True):
+def register_user(username, email, password, login=True):
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     # querying db to search if email already exists
     email_exists = User.query.filter_by(email=email).first()
@@ -70,3 +71,12 @@ def get_request_data(request):
         except IndexError:
             return {}
     return data
+
+
+def get_token(user):
+    token = jwt.encode({
+        'sub': user.email,
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(minutes=30)},
+        'So safe')
+    return token.decode('UTF-8')

@@ -94,6 +94,7 @@ def create_app(test_config=None, environment=None):
 
         @app.after_request
         def after_request(response):
+            response.set_cookie('session', '', expires=0)
             if app.config['ENV'] == 'production':
                 response.headers.add('Access-Control-Allow-Origin',
                                      'http://ec2-34-201-242-135.compute-1.amazonaws.com:3000/')

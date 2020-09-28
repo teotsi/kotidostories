@@ -8,8 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from kotidostories import bcrypt, db, q
 from kotidostories.models.user import User, verify_reset_token
 from kotidostories.schemas.PostSchema import PostSchema
-from kotidostories.utils.auth_utils import auth_utils
-from kotidostories.utils.auth_utils.auth_utils import send_reset_email, get_request_data
+from kotidostories.utils.auth_utils import send_reset_email, get_request_data, get_token, register_user
 from kotidostories.utils.general_utils import serialize
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -29,18 +28,10 @@ def log_in():
     user = User.query.filter_by(email=email).first()  # checking if user exists
     print(bcrypt.generate_password_hash(password).decode('utf-8'))
     if user and bcrypt.check_password_hash(user.password_hash, password):
-        token = jwt.encode({
-            'sub': user.email,
-            'iat': datetime.utcnow(),
-            'exp': datetime.utcnow() + timedelta(minutes=30)},
-            'So safe')
 
         login_user(user, remember=bool(remember_me))
-        posts = [serialize(post) for post in user.posts]
-
-        return jsonify({'posts': posts,
-                        'token': token.decode('UTF-8'),
-                        'user': 'test'}), 200
+        return jsonify({'user': serialize(user),
+                        'token': get_token(user)}), 200
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
 
@@ -54,27 +45,9 @@ def register():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
-
     if not (email and username and password):  # checking if necessary credentials were provided
         return jsonify({'message': 'Missing credentials'}), 403
-    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-    # querying db to search if email already exists
-    email_exists = User.query.filter_by(email=email).first()
-
-    if email_exists:
-        return jsonify({'message': 'Email is taken!'}), 403
-
-    # same for username
-    username_exists = User.query.filter_by(username=username).first()
-    if username_exists:
-        return jsonify({'message': 'Username is taken!'}), 403
-
-    # creating user and adding to database
-    user = User(username=username, email=email, password_hash=password_hash)
-    db.session.add(user)
-    db.session.commit()
-    login_user(user, remember=False)  # logging user in
-    return jsonify({'message': 'New user created!'})
+    return register_user(username, email, password)
 
 
 @auth_bp.route("/logout/")
