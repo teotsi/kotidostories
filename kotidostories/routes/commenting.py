@@ -16,7 +16,7 @@ def get_comments(user=None, post_id=None):
 
 
 @commenting_bp.route('/<string:comment_id>/')
-def get_comment(post_id=None, comment_id=None):
+def get_comment(user=None, post_id=None, comment_id=None):
     post = Post.query.filter_by(id=post_id).first_or_404()
     comment = post.comments.filter_by(id=comment_id).first_or_404()
     return jsonify(serialize(comment))
@@ -30,7 +30,7 @@ def post_comment(user=None, post_id=None):
     post = user_data.posts.filter_by(id=post_id).first_or_404()
     content = data.get('content')
     if not content:
-        return jsonify({'message':'invalid content'})
+        return jsonify({'message': 'invalid content'})
     user_id = current_user.id
     from_author = user_id == post.user_id
     comment = Comment(user_id=user_id, post_id=post_id, content=content,

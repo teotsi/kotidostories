@@ -1,9 +1,20 @@
+import os
+
 from bs4 import BeautifulSoup
 from flask import jsonify
 
 from kotidostories import es
 from kotidostories.models import Post
 from kotidostories.utils.general_utils import serialize
+
+
+def es_enabled(func):
+    def wrap(*args, **kwargs):
+        if os.environ.get('ES_ENABLED', default=False):
+            return func()
+        else:
+            return {}
+    return wrap
 
 
 def clean_content(text):
@@ -23,6 +34,7 @@ def get_match_query(size, text):
     }
 
 
+@es_enabled
 def get_more_like_this_query(text, size=None):
     if size is None:
         size = 5
@@ -44,6 +56,7 @@ def get_more_like_this_query(text, size=None):
     }
 
 
+@es_enabled
 def index_post(post):
     body = {
         "title": post.title,
@@ -54,6 +67,7 @@ def index_post(post):
                       body=body)
 
 
+@es_enabled
 def get_suggestion(text=None, size=None, id=None):
     if size is None:
         size = 5
@@ -73,6 +87,7 @@ def get_suggestion(text=None, size=None, id=None):
         return {}
 
 
+@es_enabled
 def update_index(post):
     body = {
         "doc": {
@@ -83,5 +98,6 @@ def update_index(post):
     es.update(index="kot_front", id=post.id, body=body)
 
 
+@es_enabled
 def delete_post_from_index(id):
     es.delete(index='kot_front', id=id, doc_type='_doc')

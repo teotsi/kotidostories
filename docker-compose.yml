@@ -4,7 +4,7 @@ services:
     postgres:
       image: postgres
       volumes:
-        - postgres_data:/var/lib/postgresql/data/  
+        - postgres_data:/var/lib/weirdplace/data/
       ports:
         - 127.0.0.1:5432:5432
       environment:

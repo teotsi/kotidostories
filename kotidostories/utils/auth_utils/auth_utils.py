@@ -36,7 +36,7 @@ def send_reset_email(user, frontend='http://localhost:3000/reset?'):
                   recipients=[user.email])
     msg.body = f'''To reset your password, visit the following link:
 {frontend}token={token}
-This token is going to be active until {datetime.now() + timedelta(minutes=30)}
+This token is going to be active until {datetime.now() + timedelta(minutes=60)}
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
     mail.send(msg)
