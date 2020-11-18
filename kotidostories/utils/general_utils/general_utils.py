@@ -23,8 +23,8 @@ def serialize(object):
 
 
 def create_pictures_directory(user_id="", post_id=""):
-    Path("pictures/user").joinpath(user_id).mkdir(parents=True, exist_ok=True)
-    Path("pictures/post").joinpath(user_id, post_id).mkdir(parents=True, exist_ok=True)
+    Path(f"pictures/user/{user_id}").mkdir(parents=True, exist_ok=True)
+    Path(f"pictures/post/{user_id}/{post_id}").mkdir(parents=True, exist_ok=True)
 
 
 def save_img(image, obj, user_id, post_id=''):
@@ -34,5 +34,5 @@ def save_img(image, obj, user_id, post_id=''):
     image_name = f'{obj.id}.{image_extension}'
     create_pictures_directory(user_id=user_id, post_id=post_id)
     object_cls = obj.__tablename__
-    obj.img = str(PurePosixPath('pictures').joinpath(object_cls, user_id, post_id, image_name))
+    obj.img = str(PurePosixPath('pictures') / object_cls / user_id / post_id / image_name)
     image.save(obj.img)

@@ -19,7 +19,6 @@ def es_enabled(func):
 
 def clean_content(text):
     soup = BeautifulSoup(text, features='html.parser')
-    print(text)
     return soup.get_text(separator=' ').replace('\xa0', ' ')
 
 
